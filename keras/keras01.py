@@ -10,7 +10,7 @@ y = np.array([1,2,3])
 
 #2. modeling
 model = Sequential()
-model.add(Dense(1, input_dim=1)) #input 1, output 1
+model.add(Dense(1, input_dim=1)) #input 한덩어리, output 한덩어리
 
 #3. compile, traning
 model.compile(loss='mse', optimizer='adam') #compile
