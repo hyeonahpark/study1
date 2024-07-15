@@ -15,7 +15,7 @@ y=np.array([1,2,3,4,5,6,7,8,9,10])
 # #[검색] train과 test를 섞어서 7:3으로 나눠라
 # #힌트 : 사이킷런
 
-x_train, x_test, y_train, y_test= train_test_split(x,y,test_size=0.3)
+x_train, x_test, y_train, y_test= train_test_split(x,y,test_size=0.3, shuffle=True, random_state=123)
 
 # print(x_train) # [ 8  4  7 10  2  1  9]
 # print(y_train) # [ 8  4  7 10  2  1  9]
