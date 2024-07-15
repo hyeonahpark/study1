@@ -1,6 +1,8 @@
 import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
+import sklearn
+from sklearn.model_selection import train_test_split
 
 #1.data
 x=np.array([1,2,3,4,5,6,7,8,9,10])
@@ -10,14 +12,15 @@ y=np.array([1,2,3,4,5,6,7,8,9,10])
 # 데이터셋에서 랜덤하게 추출하여 테스트시키면 loss가 증가하는 문제를 해결할 수 있다.
 
 #[실습] 
+# #[검색] train과 test를 섞어서 7:3으로 나눠라
+# #힌트 : 사이킷런
 
-x_train=x[:7] 
-y_train=y[:7]
-# print(x_train)
+x_train, x_test, y_train, y_test= train_test_split(x,y,test_size=0.3)
 
-x_test=x[7:]
-y_test=x[7:]
-# print(x_test)
+# print(x_train) # [ 8  4  7 10  2  1  9]
+# print(y_train) # [ 8  4  7 10  2  1  9]
+# print(x_test) # [3 6 5]
+# print(y_test) # [3 6 5]
 
 #2. modeling
 model=Sequential()
@@ -25,11 +28,11 @@ model.add(Dense(1, input_dim=1))
 
 #3. compile
 model.compile(loss='mse', optimizer='adam')
-model.fit(x_train, y_train, epochs=3000, batch_size=1)
+model.fit(x_train, y_train, epochs=2000, batch_size=1)
 
 #4. predict
 print("+++++++++++++++++++++++++++++++++++++++")
 loss=model.evaluate(x_test, y_test)
 results=model.predict([11])
-print("loss : ", loss)
-print("[11]의 예측값 : ", results)
+print("loss : ", loss) # 0.0
+print("[11]의 예측값 : ", results) #11.

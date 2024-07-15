@@ -8,6 +8,8 @@ x=np.array([range(10), range(21,31), range(201,211)])
 y=np.array([[1,2,3,4,5,6,7,8,9,10],
             [10,9,8,7,6,5,4,3,2,1]])
 
+print(x)
+
 np.set_printoptions(precision=1, suppress=True)
 # print(x.shape) #(3, 10)
 # print(y.shape) #(2, 10)
