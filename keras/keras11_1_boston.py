@@ -28,13 +28,14 @@ model.add(Dense(10, input_dim=13))
 model.add(Dense(10))
 model.add(Dense(10))
 model.add(Dense(10))
-model.add(Dense(10))
+model.add(Dense(3))
+model.add(Dense(1))
 model.add(Dense(1))
 
 
 #3. compile
 model.compile(loss='mse', optimizer='adam')
-model.fit(x_train, y_train, epochs=1000, batch_size=5)
+model.fit(x_train, y_train, epochs=3000, batch_size=5)
 
 #4. predict
 
@@ -56,3 +57,7 @@ print("R2의 점수 : ", r2)
 #loss :  16.94853973388672, R2의 점수 :  0.7508356644979253 (random_state=55, test_size=0.25, epochs=10000)
 #loss :  21.8568058013916, R2의 점수 :  0.7632840808134838 (random_state=333, test_size=0.25, epochs=10000)
 #loss :  25.599809646606445, R2의 점수 :  0.764170205161022 (random_state=6666, tese_size=0.2, epochs=1000)
+#loss :  24.135040283203125, R2의 점수 :  0.7776639093439579 (random_state=6666, tese_size=0.2, epochs=1000) 13 10 10 5 3 1 1
+#loss :  23.845094680786133, R2의 점수 :  0.7803349286808787 (random_state=6666, tese_size=0.2, epochs=1000) 13 10 7 5 3 1 1
+#loss :  23.40278434753418, R2의 점수 :  0.7844095751777879
+#loss :  23.67738914489746, R2의 점수 :  0.7818798717880635 (random_state=6666, tese_size=0.2, epochs=1000) 13 7 3 3 1 1
