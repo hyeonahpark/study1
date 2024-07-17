@@ -8,6 +8,11 @@ from sklearn.model_selection import train_test_split
 
 #1.data
 dataset=load_boston()
+print(dataset)
+print(dataset.DESCR)
+print(dataset.feature_names) #['CRIM' 'ZN' 'INDUS' 'CHAS' 'NOX' 'RM' 'AGE' 'DIS' 'RAD' 'TAX' 'PTRATIO' 'B' 'LSTAT']
+
+
 # print(dataset)
 x=dataset.data
 y=dataset.target
@@ -61,3 +66,4 @@ print("R2의 점수 : ", r2)
 #loss :  23.845094680786133, R2의 점수 :  0.7803349286808787 (random_state=6666, tese_size=0.2, epochs=1000) 13 10 7 5 3 1 1
 #loss :  23.40278434753418, R2의 점수 :  0.7844095751777879
 #loss :  23.67738914489746, R2의 점수 :  0.7818798717880635 (random_state=6666, tese_size=0.2, epochs=1000) 13 7 3 3 1 1
+
