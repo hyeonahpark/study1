@@ -59,7 +59,7 @@ model.add(Dense(1, activation='relu'))
 
 #3. compile
 model.compile(loss='mse', optimizer='adam')
-model.fit(x_train, y_train, epochs=1000, batch_size=32)
+model.fit(x_train, y_train, epochs=1000, batch_size=32, verbose=0, validation_split=0.3)
 
 #4. predict
 loss=model.evaluate(x_test, y_test)
@@ -80,6 +80,8 @@ sampleSubmission['count'] = y_submit
 print(sampleSubmission)
 print(sampleSubmission.shape) 
 
-sampleSubmission.to_csv(path + "submission_0717_2.csv")
+sampleSubmission.to_csv(path + "submission_0717_3.csv")
 print("loss : ", loss)
 print("R2의 점수 : ", r2)
+
+#loss :  22745.009765625, R2의 점수 :  0.2827457847063516
