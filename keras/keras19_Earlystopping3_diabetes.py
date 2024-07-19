@@ -2,6 +2,7 @@ from sklearn.datasets import load_diabetes
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from sklearn.model_selection import train_test_split
+import time
 
 #1. data
 datasets = load_diabetes()
@@ -28,8 +29,20 @@ model.add(Dense(5))
 model.add(Dense(1))
 
 #3. compile
+
+from tensorflow.keras.callbacks import EarlyStopping
+es = EarlyStopping(
+    monitor='val_loss',
+    mode = 'min', #모르면 auto
+    patience=10,
+    restore_best_weights=True, #작성 안하면 마지막 지점 반환/ True인 경우 가장 좋은 weight 사용
+    )
+
+
 model.compile(loss='mse', optimizer='adam')
-model.fit(x_train, y_train, epochs=2000, batch_size=16, verbose=0, validation_split=0.1)
+start_time=time.time()
+hist=model.fit(x_train, y_train, epochs=100, batch_size=16, verbose=1, validation_split=0.3, callbacks=[es])
+end_time=time.time()
 
 
 #4. predict
@@ -56,3 +69,29 @@ print("R2의 점수 : ", r2)
 #loss :  2870.21728515625. R2의 점수 :  0.6134505325939545
 #loss :  2875.33203125 ,R2의 점수 :  0.6127616876051016
 #loss :  2961.624267578125, R2의 점수 :  0.6011402105767398
+
+print("걸린 시간 : ", round(end_time - start_time, 2), "초") #round 함수 : 반올림, 뒤에 숫자는 소수 자리 수
+
+print("=================================hist======================================")
+print(hist) 
+print("==============================hist.history======================================")
+print(hist.history) #loss와 val_loss가 epochs 수 만큼 출력됨
+print("==============================loss======================================")
+print(hist.history['loss']) #history에서 loss 값만 따로 출력
+print("==============================val_loss======================================")
+print(hist.history['val_loss']) #history에서 val_loss 값만 따로 출력
+
+
+import matplotlib.pyplot as plt
+plt.figure(figsize=(9,6)) #그림판 사이즈 설정
+plt.plot(hist.history['loss'], c='red', label='loss',)
+plt.plot(hist.history['val_loss'], c='blue', label='val_loss',)
+plt.legend(loc='upper right') #범례, 범례 위치 위에 오른쪽
+plt.title('Diabetes Loss')
+plt.xlabel('epoch')
+plt.ylabel('loss')
+plt.grid()
+
+# plt.plot(hist.history['loss'], c='red', label='loss', marker='.')
+
+plt.show()
