@@ -52,7 +52,7 @@ es = EarlyStopping(
     )
 
 
-hist = model.fit(x_train, y_train, epochs=10, batch_size=32, verbose = 1, validation_split=0.2, callbacks=[es]) #hist는 history의 약자,
+hist = model.fit(x_train, y_train, epochs=1000, batch_size=32, verbose = 1, validation_split=0.2, callbacks=[es]) #hist는 history의 약자,
 end_time=time.time() #끝나는 시간 반환
 
 #4. predict
