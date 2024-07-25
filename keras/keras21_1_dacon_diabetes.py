@@ -1,4 +1,4 @@
-#https://dacon.io/competitions/official/236068/mysubmission?isSample=1
+#https://dacon.io/competitions/official/236068
 
 import numpy as np
 from tensorflow.keras.models import Sequential
@@ -46,11 +46,11 @@ print("고유한 요소:", unique) #고유한 요소: [0 1]
 print("각 요소의 개수:", counts) #각 요소의 개수: [424 228]
 
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.9, random_state=512)
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.9, random_state=1186)
 
 #2. modeling
 model=Sequential()
-model.add(Dense(32, input_dim=8, activation='relu')) #activation function 활성화 함수, 한정함수 : 다음레이어에 오는 값의 범위를 한정한다. y=relu(wx+b) , relu 함수는 0보다 낮은 값이 나오면 0으로 나옴.
+model.add(Dense(16, input_dim=8, activation='relu')) #activation function 활성화 함수, 한정함수 : 다음레이어에 오는 값의 범위를 한정한다. y=relu(wx+b) , relu 함수는 0보다 낮은 값이 나오면 0으로 나옴.
 model.add(Dense(32, activation='relu'))
 model.add(Dense(32, activation='relu'))
 model.add(Dense(64, activation='relu'))
@@ -68,12 +68,12 @@ from tensorflow.keras.callbacks import EarlyStopping
 es = EarlyStopping(
     monitor='val_loss',
     mode = 'min', #모르면 auto
-    patience=50,
+    patience=70,
     restore_best_weights=True, #작성 안하면 마지막 지점 반환/ True인 경우 가장 좋은 weight 사용
     )
 
 
-model.compile(loss='mse', optimizer='adam', metrics=['accuracy', 'acc', 'mse'])
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy', 'acc', 'mse'])
 start_time=time.time()
 model.fit(x_train, y_train, epochs=10000, batch_size=1, verbose=1, validation_split=0.1, callbacks=[es])
 end_time=time.time()
@@ -98,7 +98,7 @@ sample_submission['Outcome'] = y_submit
 # print(sample_submission) 
 # print(sample_submission.shape) # (116, 2)from sklearn.metrics import r2_score
 
-sample_submission.to_csv(path + "submission_0722_5.csv")
+sample_submission.to_csv(path + "submission_0722_7.csv")
 
 
 from sklearn.metrics import r2_score, accuracy_score
@@ -109,3 +109,17 @@ print("loss : ", loss[0])
 print("ACC : ", round(loss[1], 3))
 # print("acc_score : ", accuracy_score)
 print("걸린 시간 : ", round(end_time - start_time, 2), "초")
+
+
+# mse 사용
+#loss :  0.16671177744865417, ACC :  0.788, 걸린 시간 :  38.07 초
+#loss :  0.16646991670131683, ACC :  0.758. 걸린 시간 :  33.83 초
+
+# binary_cross entropy 사용
+#loss :  0.5410665273666382, ACC :  0.758, 걸린 시간 :  37.37 초
+#loss :  0.5549544095993042, ACC :  0.773, 걸린 시간 :  27.63 초
+#loss :  0.6763560771942139, ACC :  0.773, 걸린 시간 :  63.31 초
+#loss :  0.6377341151237488, ACC :  0.773
+#loss :  0.3791206181049347, ACC :  0.818, 걸린 시간 :  48.73 초
+#loss :  0.44093620777130127, ACC :  0.788. 걸린 시간 :  23.02 초
+#loss :  0.4059293866157532, ACC :  0.848, 걸린 시간 :  28.05 초

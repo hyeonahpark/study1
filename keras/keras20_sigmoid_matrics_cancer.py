@@ -53,7 +53,7 @@ model.add(Dense(1, activation='sigmoid')) #최종 아웃풋 노드는 0과 1이 
 
 
 #3. compile
-model.compile(loss='mse', optimizer='adam', metrics=['accuracy', 'acc', 'mse'])
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy', 'acc', 'mse'])
 start_time=time.time() #time.time() 현재 시간 반환
 
 from tensorflow.keras.callbacks import EarlyStopping
@@ -83,3 +83,12 @@ accuracy_score = accuracy_score(y_test, y_pred)
 print("acc_score : ", accuracy_score)
 print("걸린 시간 : ", round(end_time - start_time, 2), "초") # round 함수 : 반올림, 뒤에 숫자는 소수 자리 수
 
+
+# mse 사용
+#acc_score :  0.6140350877192983, 걸린 시간 :  1.34 초
+#acc_score :  0.935672514619883 , 걸린 시간 :  5.68 초
+
+# binary_cross entropy 사용
+#acc_score :  0.935672514619883 , 걸린 시간 :  4.9 초
+#acc_score :  0.9415204678362573, 걸린 시간 :  4.69 초
+#acc_score :  0.9473684210526315, 걸린 시간 :  5.35 초

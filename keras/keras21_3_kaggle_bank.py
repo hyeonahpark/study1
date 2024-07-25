@@ -1,5 +1,7 @@
 #https://www.kaggle.com/competitions/playground-series-s4e1/data?select=train.csv
 
+#scaling 작업 -> 몰려있는 값 표준편차로 구하기
+
 import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
@@ -7,8 +9,6 @@ import time
 from sklearn.model_selection import train_test_split
 from keras.callbacks import EarlyStopping
 import pandas as pd
-# from sklearn.ensemble import GradientBoostingClassifier
-
 
 #1. data
 
@@ -73,9 +73,9 @@ es = EarlyStopping(
     )
 
 
-model.compile(loss='mse', optimizer='adam', metrics=['accuracy', 'acc', 'mse'])
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy', 'acc', 'mse'])
 start_time=time.time()
-model.fit(x_train, y_train, epochs=2000, batch_size=512, verbose=1, validation_split=0.1, callbacks=[es])
+model.fit(x_train, y_train, epochs=2000, batch_size=32, verbose=1, validation_split=0.1, callbacks=[es])
 end_time=time.time()
 
 #4. predict
@@ -99,7 +99,7 @@ sample_submission['Exited'] = y_submit
 # print(sample_submission) 
 # print(sample_submission.shape) # (116, 2)from sklearn.metrics import r2_score
 
-sample_submission.to_csv(path + "submission_0722_3.csv")
+sample_submission.to_csv(path + "submission_0722_5.csv")
 
 
 from sklearn.metrics import r2_score, accuracy_score
@@ -110,3 +110,11 @@ print("loss : ", loss[0])
 print("ACC : ", round(loss[1], 3))
 # print("acc_score : ", accuracy_score)
 print("걸린 시간 : ", round(end_time - start_time, 2), "초")
+
+
+
+# loss :  0.5007482767105103,ACC :  0.793
+
+
+# binary
+#loss :  0.3231148421764374, ACC :  0.863
