@@ -51,6 +51,11 @@ y=pd.get_dummies(y)
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.9, random_state=8)
 
+from sklearn.preprocessing import MinMaxScaler
+scaler=MinMaxScaler()
+scaler.fit(x_train)
+x_train = scaler.transform(x_train) 
+x_test = scaler.transform(x_test)
 
 #2. modelinig
 
@@ -120,3 +125,4 @@ print("걸린 시간 : ", round(end_time - start_time, 2), "초")
 
 
 
+#loss :  0.5749265551567078, ACC :  0.791

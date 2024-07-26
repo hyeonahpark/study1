@@ -46,16 +46,37 @@ print(x.shape) #(10886, 8)
 y=train_csv['count']
 print(y.shape) # (10886, )
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.75, random_state=654)
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.9, random_state=654)
+
+
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.preprocessing import MaxAbsScaler, RobustScaler
+
+scaler=RobustScaler()
+
+# scaler=MinMaxScaler()
+scaler.fit(x_train)
+x_train = scaler.transform(x_train) 
+x_test = scaler.transform(x_test)
+test_csv=scaler.transform(test_csv)
+
+from tensorflow.keras.callbacks import EarlyStopping
+es = EarlyStopping(
+    monitor='val_loss',
+    mode = 'min', #모르면 auto
+    patience=30,
+    restore_best_weights=True, #작성 안하면 마지막 지점 반환/ True인 경우 가장 좋은 weight 사용
+    )
+
 
 #2. modeling
 model=Sequential()
 model.add(Dense(64, input_dim=8, activation='relu')) #activation function 활성화 함수, 한정함수 : 다음레이어에 오는 값의 범위를 한정한다. y=relu(wx+b) , relu 함수는 0보다 낮은 값이 나오면 0으로 나옴.
 model.add(Dense(32, activation='relu'))
-model.add(Dense(16, activation='relu'))
 model.add(Dense(32, activation='relu'))
-model.add(Dense(16, activation='relu'))
-model.add(Dense(8, activation='relu'))
+model.add(Dense(32, activation='relu'))
+model.add(Dense(32, activation='relu'))
+model.add(Dense(32, activation='relu'))
 model.add(Dense(128, activation='relu'))
 model.add(Dense(64, activation='relu'))
 model.add(Dense(32, activation='relu'))
@@ -63,19 +84,9 @@ model.add(Dense(2, activation='relu'))
 model.add(Dense(1, activation='linear'))
 
 #3. compile
-
-from tensorflow.keras.callbacks import EarlyStopping
-es = EarlyStopping(
-    monitor='val_loss',
-    mode = 'min', #모르면 auto
-    patience=10,
-    restore_best_weights=True, #작성 안하면 마지막 지점 반환/ True인 경우 가장 좋은 weight 사용
-    )
-
-
 model.compile(loss='mse', optimizer='adam')
 start_time=time.time()
-hist=model.fit(x_train, y_train, epochs=1000, batch_size=32, validation_split=0.3, callbacks=[es])
+hist=model.fit(x_train, y_train, epochs=1000, batch_size=5, validation_split=0.3, callbacks=[es])
 end_time=time.time()
 
 #4. predict
@@ -97,39 +108,21 @@ print(y_submit.shape)
 # print(sampleSubmission)
 # print(sampleSubmission.shape) 
 
-# sampleSubmission.to_csv(path + "submission_0717_2.csv")
+sampleSubmission.to_csv(path + "submission_0725_3.csv")
 print("loss : ", loss)
 print("R2의 점수 : ", r2)
 
 print("걸린 시간 : ", round(end_time - start_time, 2), "초") #round 함수 : 반올림, 뒤에 숫자는 소수 자리 수
 
-print("=================================hist======================================")
-print(hist) 
-print("==============================hist.history======================================")
-print(hist.history) #loss와 val_loss가 epochs 수 만큼 출력됨
-print("==============================loss======================================")
-print(hist.history['loss']) #history에서 loss 값만 따로 출력
-print("==============================val_loss======================================")
-print(hist.history['val_loss']) #history에서 val_loss 값만 따로 출력
 
+#loss :  21805.8203125, #R2의 점수 :  0.30199272972987623, 걸린 시간 :  11.47 초
 
-from matplotlib import font_manager, rc # 폰트 세팅을 위한 모듈 추가
-font_path = "C:/Windows/Fonts/malgun.ttf" # 사용할 폰트명 경로 삽입
-font = font_manager.FontProperties(fname = font_path).get_name()
-rc('font', family = font)
+#==================================================================================================minmaxScaler
 
-import matplotlib.pyplot as plt
-plt.figure(figsize=(9,6)) #그림판 사이즈 설정
-plt.plot(hist.history['loss'], c='red', label='loss',)
-plt.plot(hist.history['val_loss'], c='blue', label='val_loss',)
-plt.legend(loc='upper right') #범례, 범례 위치 위에 오른쪽
-plt.title('Kaggle Loss')
-plt.xlabel('epoch')
-plt.ylabel('loss')
-plt.grid()
+#loss :  20804.279296875. R2의 점수 :  0.3394395800937058
+#==================================================================================================standardScaler
 
-# plt.plot(hist.history['loss'], c='red', label='loss', marker='.')
+#loss :  20859.388671875. R2의 점수 :  0.3376896970950233
 
-plt.show()
-
-#============================================================
+#robust :
+# loss :  21392.109375 R2의 점수 :  0.3207751496176905

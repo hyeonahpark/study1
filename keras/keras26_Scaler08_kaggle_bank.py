@@ -47,7 +47,14 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.9, random
 # gbrt.fit(x_train, y_train)
 
 
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.preprocessing import MaxAbsScaler, RobustScaler
 
+scaler=RobustScaler()
+# scaler=MinMaxScaler()
+scaler.fit(x_train)
+x_train = scaler.transform(x_train) 
+x_test = scaler.transform(x_test)
 
 #2. modeling
 model=Sequential()
@@ -100,7 +107,7 @@ sample_submission['Exited'] = y_submit
 # print(sample_submission) 
 # print(sample_submission.shape) # (116, 2)from sklearn.metrics import r2_score
 
-sample_submission.to_csv(path + "submission_0722_5.csv")
+sample_submission.to_csv(path + "submission_0725_3.csv")
 
 
 from sklearn.metrics import r2_score, accuracy_score
@@ -119,3 +126,16 @@ print("걸린 시간 : ", round(end_time - start_time, 2), "초")
 
 # binary
 #loss :  0.3231148421764374, ACC :  0.863
+
+
+#minmaxscaler
+#loss :  0.3233070373535156. ACC :  0.863
+
+#standardscaler
+#loss :  0.32407858967781067, ACC :  0.863
+
+#maxabs
+#loss :  0.3221178352832794 ACC :  0.863
+
+#robust
+#loss :  0.32438650727272034, ACC :  0.862
