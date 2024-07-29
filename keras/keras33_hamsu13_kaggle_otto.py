@@ -125,11 +125,6 @@ output1 = Dense(9)(drop13)
 model = Model(inputs=input1, outputs = output1)
 model.summary()
 
-
-
-
-
-
 #3. compile
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy', 'acc', 'mse'])
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
