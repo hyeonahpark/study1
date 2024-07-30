@@ -140,7 +140,6 @@ end_time=time.time()
 
 model.save('./_save/keras35/keras35_07_mcp.hdf5')
 
-
 #4. predict
 
 loss=model.evaluate(x_test, y_test)
