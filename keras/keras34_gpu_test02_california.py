@@ -67,37 +67,38 @@ model.compile(loss='mse', optimizer='adam')
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 
 
-es = EarlyStopping(monitor='val_loss', mode='min', patience=30, verbose=1, restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', mode='min', patience=10, verbose=1, restore_best_weights=True)
 
-################## mcp 세이브 파일명 만들기 시작 ###################
-import datetime
-date = datetime.datetime.now()
-print(date) #2024-07-26 16:49:57.565880
-print(type(date)) #<class 'datetime.datetime'>
-date = date.strftime("%m%d_%H%M")
-print(date) #0726_1654
-print(type(date)) #<class 'str'>
+# ################## mcp 세이브 파일명 만들기 시작 ###################
+# import datetime
+# date = datetime.datetime.now()
+# print(date) #2024-07-26 16:49:57.565880
+# print(type(date)) #<class 'datetime.datetime'>
+# date = date.strftime("%m%d_%H%M")
+# print(date) #0726_1654
+# print(type(date)) #<class 'str'>
 
 
-path = 'C:\\ai5\\_save\\keras32\\k32_02\\'
-filename ='{epoch:04d}-{val_loss:.4f}.hdf5'   #1000-0.7777.hdf5
-filepath = "".join([path, 'k32_02_', date, '_' , filename])
-#생성 예 : ./_save/keras29_mcp/k29_0726_1654_1000-0.7777.hdf5
+# path = 'C:\\ai5\\_save\\keras32\\k32_02\\'
+# filename ='{epoch:04d}-{val_loss:.4f}.hdf5'   #1000-0.7777.hdf5
+# filepath = "".join([path, 'k32_02_', date, '_' , filename])
+# #생성 예 : ./_save/keras29_mcp/k29_0726_1654_1000-0.7777.hdf5
 ################## mcp 세이브 파일명 만들기 끝 ###################
 
-mcp=ModelCheckpoint(
-    monitor='val_loss',
-    mode='auto',
-    verbose = 1,
-    save_best_only=True,
-    filepath=filepath)
+# mcp=ModelCheckpoint(
+#     monitor='val_loss',
+#     mode='auto',
+#     verbose = 1,
+#     save_best_only=True,
+#     filepath=filepath)
 
 
 start_time=time.time()
-hist=model.fit(x_train, y_train, epochs=1000, batch_size=5, validation_split=0.3, callbacks=[es, mcp])
+hist=model.fit(x_train, y_train, epochs=1000, batch_size=32, validation_split=0.3, callbacks=[es])
 end_time=time.time()
 
-model.save('./_save/keras32/k32_02/keras32_02_mcp.hdf5')
+# model.save('./_save/keras32/k32_02/keras32_02_mcp.hdf5')
+print("걸린 시간 : ", round(end_time - start_time, 2), "초") #round 함수 : 반올림, 뒤에 숫자는 소수 자리 수
 
 
 #4. predict
@@ -117,3 +118,8 @@ print("R2의 점수 : ", r2)
 #dropout
 # loss :  0.5061473250389099
 # R2의 점수 :  0.6243669509853709
+
+
+#걸린시간
+#cpu : 걸린 시간 :  3.14 초
+#gpu : 걸린 시간 :  24.22 초

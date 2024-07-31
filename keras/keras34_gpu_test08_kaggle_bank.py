@@ -177,6 +177,7 @@ accuracy_score = accuracy_score(y_test, y_predict)
 
 print("loss : ", loss[0])
 print("ACC : ", round(loss[1], 3))
+print("걸린 시간 : ", round(end_time - start_time, 2), "초") # round 함수 : 반올림, 뒤에 숫자는 소수 자리 수
 
 #loss :  0.3242044150829315
 # ACC :  0.862
@@ -184,3 +185,8 @@ print("ACC : ", round(loss[1], 3))
 #dropout
 # loss :  0.38874727487564087
 # ACC :  0.859
+
+
+#걸린시간
+#cpu : 28.32초 
+#gpu : 153.74초

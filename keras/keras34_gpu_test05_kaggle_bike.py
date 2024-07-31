@@ -192,3 +192,7 @@ print("걸린 시간 : ", round(end_time - start_time, 2), "초") #round 함수 
 #dropuout
 # loss :  27933.568359375
 # R2의 점수 :  0.11307610733857121
+
+#걸린시간
+#cpu : 10.23초
+#gpu : 41.25초

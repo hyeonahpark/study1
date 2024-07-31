@@ -74,7 +74,7 @@ dense7 = Dense(13, name = 'ys7')(drop6)
 drop7 = Dropout(0.3)(dense7)
 dense8 = Dense(16, name = 'ys8')(drop7)
 drop8 = Dropout(0.3)(dense8)
-output1 = Dense(3)(drop8)
+output1 = Dense(3, activation='softmax')(drop8)
 model = Model(inputs=input1, outputs = output1)
 model.summary()
 
@@ -137,3 +137,7 @@ print("걸린 시간 : ", round(end_time - start_time, 2), "초") # round 함수
 
 # loss :  0.36784160137176514
 # ACC :  0.944
+
+#걸린시간
+#cpu : 1.94초
+#gpu : 3.46초

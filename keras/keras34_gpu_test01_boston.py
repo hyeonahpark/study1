@@ -1,17 +1,15 @@
-#문제 : overfit 과적합 / 할수록 더 안좋아짐
-#dropout 기법 사용하니 성능이 향상되었다.
+#cpu일 때와 cpu일 때의 시간 비교
+import time
 
-#29-5 copy
 
 
 import numpy as np
-from tensorflow.keras.models import Sequential, load_model #load_model : model 을 불러옴
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.models import Sequential, load_model, Model #load_model : model 을 불러옴
+from tensorflow.keras.layers import Dense, Input
 import sklearn as sk
 print(sk.__version__) #0.24.2
 from sklearn.datasets import load_boston
 from sklearn.model_selection import train_test_split
-import time
 from keras.layers import Dropout
 
 #1.data
@@ -37,19 +35,38 @@ print(np.min(x_test), np.max(x_test)) #-0.008298755186722073 1.1478180091225068
 
 
 # #2. modeling
-model=Sequential()
-model.add(Dense(64, input_dim=13))
-model.add(Dense(64))
-model.add(Dropout(0.5))
-model.add(Dense(32))
-model.add(Dropout(0.5))
-model.add(Dense(32))
-model.add(Dropout(0.3))
-model.add(Dense(16))
-model.add(Dropout(0.3))
-model.add(Dense(16))
-model.add(Dropout(0.2))
-model.add(Dense(1))
+# model=Sequential()
+# model.add(Dense(64, input_dim=13)) # 특성은 항상 많으면 좋음! 데이터가 많으면 좋으니까
+# model.add(Dense(64))
+# model.add(Dropout(0.3))
+# model.add(Dense(32))
+# model.add(Dropout(0.3))
+# model.add(Dense(32))
+# model.add(Dropout(0.3))
+# model.add(Dense(16))
+# model.add(Dropout(0.3))
+# model.add(Dense(16))
+# model.add(Dropout(0.2))
+# model.add(Dense(1))
+
+
+#2-2.모델구성(함수형)
+input1= Input(shape=(13,))
+dense1 = Dense(64, name = 'ys1')(input1)
+drop1 = Dropout(0.3)(dense1)
+dense2 = Dense(64, name = 'ys2')(drop1)
+drop2 = Dropout(0.3)(dense2)
+dense3 = Dense(32, name = 'ys3')(drop2)
+drop3 = Dropout(0.3)(dense3)
+dense4 = Dense(32, name = 'ys4')(drop3)
+drop4 = Dropout(0.3)(dense4)
+dense5 = Dense(16, name = 'ys5')(drop4)
+drop5 = Dropout(0.3)(dense5)
+dense6 = Dense(16, name = 'ys6')(drop5)
+drop6 = Dropout(0.3)(dense6)
+output1 = Dense(1)(drop6)
+model = Model(inputs=input1, outputs = output1)
+model.summary()
 
 #3. compile
 model.compile(loss='mse', optimizer='adam')
@@ -104,7 +121,7 @@ print("R2의 점수 : ", r2)
 
 
 
-# print("걸린 시간 : ", round(end_time - start_time, 2), "초") #round 함수 : 반올림, 뒤에 숫자는 소수 자리 수
+print("걸린 시간 : ", round(end_time - start_time, 2), "초") #round 함수 : 반올림, 뒤에 숫자는 소수 자리 수
 
 # #loss :  28.253427505493164
 # R2의 점수 :  0.7397246085125718
@@ -121,3 +138,8 @@ print("R2의 점수 : ", r2)
 #dropout============================================
 # loss :  26.18733024597168
 # R2의 점수 :  0.7587578781411475
+
+
+#걸린시간
+#cpu : 12.79초
+#gpu : 59.15초

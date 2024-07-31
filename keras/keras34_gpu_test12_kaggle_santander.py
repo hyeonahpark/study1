@@ -172,3 +172,7 @@ sample_submission['target'] = result
 #dropout
 # loss :  0.24040205776691437
 # ACC :  0.911
+
+#걸린시간
+#cpu : 28.17초
+#gpu : 4.32초

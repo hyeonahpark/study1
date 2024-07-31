@@ -56,7 +56,7 @@ model.add(Dense(1))
 model.add(Dense(1))
 
 
-model.save("./_save/keras28/keras28_5_save_weights1.h5") #모델만 저장
+model.save_weights("./_save/keras28/keras28_5_save_weights1.h5") #가중치만 저장
 
 
 """

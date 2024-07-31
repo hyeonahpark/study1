@@ -19,7 +19,9 @@ model.summary() #모델 계층 보여줌 print 안써도 됨 !
 # =================================================================
 #  dense (Dense)               (None, 3)                 6
 
+#  dense_1 (Dense)             (None, 4)                 16
 
+#  dense_2 (Dense)             (None, 3)                 15
 
 #  dense_3 (Dense)             (None, 1)                 4
 

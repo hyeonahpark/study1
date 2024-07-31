@@ -138,3 +138,7 @@ print("걸린 시간 : ", round(end_time - start_time, 2), "초") # round 함수
 
 # loss :  0.13260766863822937
 # ACC :  0.961
+
+#걸린시간
+#cpu : 1.31초
+#gpu : 2.79초

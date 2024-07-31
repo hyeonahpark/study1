@@ -162,6 +162,7 @@ print(submission_csv.shape) # (715, 1)
 # submission_csv.to_csv(path + "submission_0716_9.csv")
 print("loss : ", loss)
 print("R2의 점수 : ", r2)
+print("걸린 시간 : ", round(end_time - start_time, 2), "초") #round 함수 : 반올림, 뒤에 숫자는 소수 자리 수
 
 #loss :  3226.569580078125
 # R2의 점수 :  0.562115010446902
@@ -169,3 +170,7 @@ print("R2의 점수 : ", r2)
 
 # loss :  3139.39990234375
 # R2의 점수 :  0.573944981216884
+
+#걸린시간
+#cpu : 2.59초
+#gpu : 2.93초

@@ -1,4 +1,4 @@
-from sklearn.datasets import load_digits
+from sklearn.datasets import fetch_covtype
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -6,47 +6,74 @@ from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Input
 import time
 
-x,y = load_digits(return_X_y=True) #return_X_y= True로 작성 가능
+#1. data
 
-print(x)
-print(y)
-print(x.shape, y.shape) #(1797, 64) (1797,) 이미지면 (1797,8,8)
+datasets = fetch_covtype()
 
-print(pd.value_counts(y,sort=False)) #sort=False를 하면 순서대로 정렬됨
-# 0    178
-# 1    182
-# 2    177
-# 3    183
-# 4    181
-# 5    182
-# 6    181
-# 7    179
-# 8    174
-# 9    180
+x = datasets.data
+y = datasets.target
+
+# print(datasets)
+# print(x.shape, y.shape) # (581012, 54) (581012,)
+# print(np.unique(y, return_counts=True)) #(array([1, 2, 3, 4, 5, 6, 7]), array([211840, 283301,  35754,   2747,   9493,  17367,  20510], dtype=int64))
+# print(pd.value_counts(y)) 
+# 2    283301
+# 1    211840
+# 3     35754
+# 7     20510
+# 6     17367
+# 5      9493
+# 4      2747
 
 y=pd.get_dummies(y)
-print(y.shape) #(1797, 10)
+# print(y.shape) #(581012, 7)
+# from sklearn.preprocessing import OneHotEncoder
+# ohe = OneHotEncoder(sparse=False) #sparse=True가 기본값
+# y=pd.DataFrame(y)
+# y= ohe.fit_transform(y)
 
+# print(y.shape) #(581012, 7)
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.9, random_state=1186, stratify=y)
+# from tensorflow.keras.utils import to_categorical
+# y = to_categorical(y)
+# print(y.shape) #(581012, 8)
+# print(y)
 
-from sklearn.preprocessing import MinMaxScaler
+# y = np.delete(y, 0 , axis = 1)
+# print(y.shape) #(581012, 7)
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.9, random_state=6666, stratify=y) #stratify : 정확하게 train_size 비율대로 잘라줌
+# print(x_train.shape, y_train.shape)
+# print(x_test.shape, y_test.shape)
+
+# print(pd.value_counts(y_train))
+#2    254881
+# 1    190768
+# 3     32108
+# 7     18477
+# 6     15656
+# 5      8555
+# 4      2465
+
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.preprocessing import MaxAbsScaler, RobustScaler
+
+# scaler=RobustScaler()
 scaler=MinMaxScaler()
 scaler.fit(x_train)
 x_train = scaler.transform(x_train) 
 x_test = scaler.transform(x_test)
 
-#2. modeling
+# 2. modeling
 from keras.layers import Dropout
-
 # model = Sequential()
-# model.add(Dense(100, activation = 'relu', input_dim=64))
+# model.add(Dense(100, activation = 'relu', input_dim=54))
 # model.add(Dropout(0.3))
 # model.add(Dense(200,  activation = 'relu'))
 # model.add(Dropout(0.3))
 # model.add(Dense(300,  activation = 'relu'))
 # model.add(Dropout(0.3))
-# model.add(Dense(600,  activation = 'relu'))
+# model.add(Dense(400,  activation = 'relu'))
 # model.add(Dropout(0.3))
 # model.add(Dense(300,  activation = 'relu'))
 # model.add(Dropout(0.3))
@@ -54,19 +81,18 @@ from keras.layers import Dropout
 # model.add(Dropout(0.3))
 # model.add(Dense(100, activation = 'relu'))
 # model.add(Dropout(0.3))
-# model.add(Dense(10, activation='softmax'))
-
+# model.add(Dense(7, activation='softmax'))
 
 
 #2-2.모델구성(함수형)
-input1= Input(shape=(64,))
+input1= Input(shape=(54,))
 dense1 = Dense(100, name = 'ys1')(input1)
 drop1 = Dropout(0.3)(dense1)
 dense2 = Dense(200, name = 'ys2')(drop1)
 drop2 = Dropout(0.3)(dense2)
 dense3 = Dense(300, name = 'ys3')(drop2)
 drop3 = Dropout(0.3)(dense3)
-dense4 = Dense(600, name = 'ys4')(drop3)
+dense4 = Dense(400, name = 'ys4')(drop3)
 drop4 = Dropout(0.3)(dense4)
 dense5 = Dense(300, name = 'ys5')(drop4)
 drop5 = Dropout(0.3)(dense5)
@@ -74,7 +100,7 @@ dense6 = Dense(200, name = 'ys6')(drop5)
 drop6 = Dropout(0.3)(dense6)
 dense7 = Dense(100, name = 'ys7')(drop6)
 drop7 = Dropout(0.3)(dense7)
-output1 = Dense(10, activation='softmax')(drop7)
+output1 = Dense(7, activation='softmax')(drop7)
 model = Model(inputs=input1, outputs = output1)
 model.summary()
 
@@ -96,9 +122,9 @@ print(date) #0726_1654
 print(type(date)) #<class 'str'>
 
 
-path = 'C:\\ai5\\_save\\keras32\\k32_11\\'
+path = 'C:\\ai5\\_save\\keras32\\k32_10\\'
 filename ='{epoch:04d}-{val_loss:.4f}.hdf5'   #1000-0.7777.hdf5
-filepath = "".join([path, 'k32_11_', date, '_' , filename])
+filepath = "".join([path, 'k32_10_', date, '_' , filename])
 #생성 예 : ./_save/keras29_mcp/k29_0726_1654_1000-0.7777.hdf5
 ################## mcp 세이브 파일명 만들기 끝 ###################
 
@@ -111,10 +137,10 @@ mcp=ModelCheckpoint(
 
 
 start_time=time.time()
-hist=model.fit(x_train, y_train, epochs=50, batch_size=32, validation_split=0.3, callbacks=[es, mcp])
+hist=model.fit(x_train, y_train, epochs=50, batch_size=256, validation_split=0.3, callbacks=[es, mcp])
 end_time=time.time()
 
-model.save('./_save/keras32/k32_11/keras32_11_mcp.hdf5')
+model.save('./_save/keras32/k32_10/keras32_10_mcp.hdf5')
 
 #4.predict
 
@@ -129,12 +155,14 @@ print("loss : ", loss[0])
 print("ACC : ", round(loss[1], 3))
 print("걸린 시간 : ", round(end_time - start_time, 2), "초") # round 함수 : 반올림, 뒤에 숫자는 소수 자리 수
 
-# loss :  0.16577006876468658
-# ACC :  0.956
+
+# loss :  0.18621324002742767
+# ACC :  0.945
 
 #dropout
-# loss :  0.16080109775066376
-# ACC :  0.972
+#loss :  0.42781001329421997
+# ACC :  0.826
 
-# loss :  0.13260766863822937
-# ACC :  0.961
+#걸린시간
+#cpu : 119.31초
+#gpu : 53.51초
