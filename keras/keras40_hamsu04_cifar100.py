@@ -1,8 +1,8 @@
 import numpy as np
 from tensorflow.keras.datasets import mnist, fashion_mnist, cifar100
 import pandas as pd
-from tensorflow.keras.models import Sequential, load_model
-from tensorflow.keras.layers import Dense, Conv2D #이미지 작업 Convolution2D == Conv2D (1D : 선, 3D : 입체형태)
+from tensorflow.keras.models import Sequential, load_model, Model
+from tensorflow.keras.layers import Dense, Conv2D, Input #이미지 작업 Convolution2D == Conv2D (1D : 선, 3D : 입체형태)
 from tensorflow.keras.layers import Flatten, Dropout, MaxPool2D, BatchNormalization
 import time
 from sklearn.model_selection import train_test_split
@@ -58,58 +58,50 @@ ohe = OneHotEncoder(sparse=False) #sparse=True가 기본값
 y_train= ohe.fit_transform(y_train.reshape(-1,1))
 y_test= ohe.fit_transform(y_test.reshape(-1,1))
 
-KERNEL_SIZE = (2, 2)
 INPUT_SHAPE = (32, 32, 3)
+KERNEL_SIZE = (3,3)
 
 #2. modeling
 model=Sequential()
-model.add(Conv2D(filters=32, kernel_size=(3,3), input_shape=INPUT_SHAPE, activation='relu'))
-model.add(BatchNormalization())
-model.add(Conv2D(filters=32, kernel_size=(4,4), input_shape=INPUT_SHAPE, activation='relu'))
-model.add(BatchNormalization())
-model.add(Dropout(0.3))
+input1=Input(shape=(32,32,3))
+dense1=Conv2D(filters=256, kernel_size=KERNEL_SIZE, input_shape=INPUT_SHAPE, activation='relu', padding='same')(input1)
+batch1=BatchNormalization()(dense1)
+maxp1=MaxPool2D()(batch1)
+dense2=Conv2D(filters=256, kernel_size=KERNEL_SIZE, input_shape=INPUT_SHAPE, activation='relu', padding='same')(batch1)
+maxp2=MaxPool2D()(dense2)
+batch2=BatchNormalization()(maxp2)
+drop1=Dropout(0.5)(batch2)
 
-model.add(Conv2D(filters=64, kernel_size=(5,5), input_shape=INPUT_SHAPE, activation='relu'))
-model.add(BatchNormalization())
-model.add(Conv2D(filters=64, kernel_size=(4,4), input_shape=INPUT_SHAPE, activation='relu'))
-model.add(BatchNormalization())
-model.add(Dropout(0.3))
+dense3=Conv2D(filters=512, kernel_size=KERNEL_SIZE, input_shape=INPUT_SHAPE, activation='relu', padding='same')(drop1)
+maxp3=MaxPool2D()(dense3)
+batch3=BatchNormalization()(maxp3)
+dense4=Conv2D(filters=512, kernel_size=KERNEL_SIZE, input_shape=INPUT_SHAPE, activation='relu', padding='same')(batch3)
+maxp4=MaxPool2D()(dense4)
+batch4=BatchNormalization()(maxp4)
+drop2=Dropout(0.5)(batch4)
 
-model.add(Conv2D(filters=128, kernel_size=(3,3), input_shape=INPUT_SHAPE, activation='relu'))
-model.add(BatchNormalization())
-model.add(Conv2D(filters=128, kernel_size=(3,3), input_shape=INPUT_SHAPE, activation='relu'))
-model.add(BatchNormalization())
-model.add(Dropout(0.3))
+dense5=Conv2D(filters=1024, kernel_size=KERNEL_SIZE, input_shape=INPUT_SHAPE, activation='relu', padding='same')(drop2)
+maxp5=MaxPool2D()(dense5)
+batch5=BatchNormalization()(maxp5)
+dense6=Conv2D(filters=1024, kernel_size=KERNEL_SIZE, input_shape=INPUT_SHAPE, activation='relu', padding='same')(batch5)
+# model.add(MaxPool2D())
+batch6=BatchNormalization()(dense6)
+drop3=Dropout(0.5)(batch6)
 
-model.add(Flatten())
+flat1=Flatten()(drop3)
 # model.add(Dropout(0.2))
-model.add(Dense(128, activation='relu'))
-model.add(Dropout(0.3))
-model.add(Dense(100, activation='softmax'))
-# model= load_model('./_save/keras35/k35_07/best/k35_07_0731_1037_0029-1.8593.hdf5')
+dense7=Dense(1024, activation='relu')(flat1)
+drop4=Dropout(0.7)(dense7)
+output1=Dense(100, activation='softmax')(drop4)
+model = Model(inputs=input1, outputs = output1)   
 
-# model.add(Conv2D(64, (3,3), activation='relu', input_shape=(32, 32, 3))) 
-#                         #shape = (batch_size, rows, columns, channels) #batch_size : 훈련시킬 데이터의 갯수
-#                         #shape = (batch_size, heights, widths, channels) #다음에 넘어갈 때는 height, widhts, filter 로 받아들임
-# model.add(Conv2D(filters=64, activation='relu', kernel_size=(3,3))) 
-# model.add(Dropout(0.3))
-# model.add(Conv2D(32, (2,2), activation='relu')) 
-# model.add(Dropout(0.3))
-# model.add(Conv2D(32, (2,2), activation='relu')) 
-# model.add(Dropout(0.3))
-# model.add(Conv2D(32, (2,2), activation='relu')) 
-# model.add(Flatten()) # 모양만 바꾼거기 때문에 연산량 0  
-# model.add(Dense(units=32, activation='relu')) 
-# model.add(Dense(units=16, input_shape=(32,), activation='relu')) 
-#                         #shpae = (batch_size, input_dim)
-# model.add(Dropout(0.3))
-# model.add(Dense(10, activation='softmax'))
+
 
 #3. compile
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy', 'acc', 'mse'])
 
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-es = EarlyStopping(monitor='val_loss', mode='min', patience=30, verbose=1, restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', mode='min', patience=50, verbose=1, restore_best_weights=True)
 
 ################## mcp 세이브 파일명 만들기 시작 ###################
 import datetime
@@ -120,9 +112,10 @@ date = date.strftime("%m%d_%H%M")
 print(date) #0726_1654
 print(type(date)) #<class 'str'>
 
-path = 'C:\\ai5\\_save\\keras35\\k35_07\\'
+
+path = 'C:\\ai5\\_save\\keras40\\'
 filename ='{epoch:04d}-{val_loss:.4f}.hdf5'   #1000-0.7777.hdf5
-filepath = "".join([path, 'k35_07_', date, '_' , filename])
+filepath = "".join([path, 'k40_', date, '_' , filename])
 #생성 예 : ./_save/keras29_mcp/k29_0726_1654_1000-0.7777.hdf5
 ################## mcp 세이브 파일명 만들기 끝 ###################
 
@@ -133,12 +126,11 @@ mcp=ModelCheckpoint(
     save_best_only=True,
     filepath=filepath)
 
-
 start_time=time.time()
-hist=model.fit(x_train, y_train, epochs=3000, batch_size=400, validation_split=0.2, callbacks=[es, mcp])
+hist=model.fit(x_train, y_train, epochs=3000, batch_size=512, validation_split=0.3, callbacks=[es, mcp])
 end_time=time.time()
 
-model.save('./_save/keras35/keras35_07_mcp.hdf5')
+# model.save('./_save/keras40/keras40_mcp.hdf5')
 
 #4. predict
 
@@ -156,8 +148,29 @@ print("ACC : ", round(loss[1], 3))
 # print("걸린 시간 : ", round(end_time - start_time, 2), "초") # round 함수 : 반올림, 뒤에 숫자는 소수 자리 수
 
 
+# loss :  2.9173665046691895
+# ACC :  0.32
+
+#loss :  2.165902853012085
+# ACC :  0.434
+#32 32 64 64 128 128 128
+
+# loss :  2.5809075832366943
+# ACC :  0.442
+
+# loss :  2.0881471633911133
+# ACC :  0.471
+
+# loss :  2.0324556827545166
+# ACC :  0.491
+
+# loss :  2.1437559127807617
+# ACC :  0.486
+
 #loss :  1.8817185163497925
 # ACC :  0.512
 
-# loss :  2.9173665046691895
-# ACC :  0.32
+
+#hamsu
+# loss :  1.7685941457748413
+# ACC :  0.537

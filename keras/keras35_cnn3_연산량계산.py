@@ -34,7 +34,7 @@ print(x_test.shape, y_test.shape) #(10000, 28, 28, 1) (10000, 10)
 
 #2. modeling
 model = Sequential()
-model.add(Conv2D(10, (2,2), input_shape=(28, 28, 1))) #27, 27, 10
+model.add(Conv2D(10, (3,3), input_shape=(28, 28, 1))) #27, 27, 10
                         #shape = (batch_size, rows, columns, channels) #batch_size : 훈련시킬 데이터의 갯수
                         #shape = (batch_size, heights, widths, channels) #다음에 넘어갈 때는 height, widhts, filter 로 받아들임
 
@@ -49,6 +49,7 @@ model.add(Dense(10, activation='softmax'))
                         
 model.summary()
                         
+#param 수 = (커널 수*채널 수 + bias(1))*filter 수
                         
 #3. compile
 

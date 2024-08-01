@@ -58,33 +58,37 @@ ohe = OneHotEncoder(sparse=False) #sparse=True가 기본값
 y_train= ohe.fit_transform(y_train.reshape(-1,1))
 y_test= ohe.fit_transform(y_test.reshape(-1,1))
 
-KERNEL_SIZE = (2, 2)
 INPUT_SHAPE = (32, 32, 3)
 
 #2. modeling
 model=Sequential()
-model.add(Conv2D(filters=32, kernel_size=(3,3), input_shape=INPUT_SHAPE, activation='relu'))
+model.add(Conv2D(filters=64, kernel_size=(3,3), input_shape=INPUT_SHAPE, activation='relu', padding='same'))
 model.add(BatchNormalization())
-model.add(Conv2D(filters=32, kernel_size=(4,4), input_shape=INPUT_SHAPE, activation='relu'))
+model.add(MaxPool2D())
+model.add(Conv2D(filters=64, kernel_size=(3,3), activation='relu', padding='same'))
 model.add(BatchNormalization())
-model.add(Dropout(0.3))
+model.add(MaxPool2D())
+model.add(Dropout(0.25))
 
-model.add(Conv2D(filters=64, kernel_size=(5,5), input_shape=INPUT_SHAPE, activation='relu'))
+model.add(Conv2D(filters=32, kernel_size=(3,3),activation='relu', padding='same'))
 model.add(BatchNormalization())
-model.add(Conv2D(filters=64, kernel_size=(4,4), input_shape=INPUT_SHAPE, activation='relu'))
+model.add(MaxPool2D())
+model.add(Conv2D(filters=32, kernel_size=(3,3),  activation='relu', padding='same'))
 model.add(BatchNormalization())
-model.add(Dropout(0.3))
+model.add(MaxPool2D())
+model.add(Dropout(0.25))
 
-model.add(Conv2D(filters=128, kernel_size=(3,3), input_shape=INPUT_SHAPE, activation='relu'))
+model.add(Conv2D(filters=16, kernel_size=(3,3), activation='relu', padding='same'))
 model.add(BatchNormalization())
-model.add(Conv2D(filters=128, kernel_size=(3,3), input_shape=INPUT_SHAPE, activation='relu'))
+model.add(MaxPool2D())
+model.add(Conv2D(filters=16, kernel_size=(3,3), activation='relu', padding='same'))
 model.add(BatchNormalization())
-model.add(Dropout(0.3))
+model.add(Dropout(0.25))
 
 model.add(Flatten())
 # model.add(Dropout(0.2))
-model.add(Dense(128, activation='relu'))
-model.add(Dropout(0.3))
+model.add(Dense(16, activation='relu'))
+model.add(Dropout(0.25))
 model.add(Dense(100, activation='softmax'))
 # model= load_model('./_save/keras35/k35_07/best/k35_07_0731_1037_0029-1.8593.hdf5')
 
@@ -135,7 +139,7 @@ mcp=ModelCheckpoint(
 
 
 start_time=time.time()
-hist=model.fit(x_train, y_train, epochs=3000, batch_size=400, validation_split=0.2, callbacks=[es, mcp])
+hist=model.fit(x_train, y_train, epochs=3000, batch_size=400, validation_split=0.3, callbacks=[es, mcp])
 end_time=time.time()
 
 model.save('./_save/keras35/keras35_07_mcp.hdf5')

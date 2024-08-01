@@ -1,3 +1,5 @@
+# 35-7 copy
+
 import numpy as np
 from tensorflow.keras.datasets import mnist, fashion_mnist, cifar100
 import pandas as pd
@@ -58,34 +60,24 @@ ohe = OneHotEncoder(sparse=False) #sparse=True가 기본값
 y_train= ohe.fit_transform(y_train.reshape(-1,1))
 y_test= ohe.fit_transform(y_test.reshape(-1,1))
 
-KERNEL_SIZE = (2, 2)
-INPUT_SHAPE = (32, 32, 3)
-
 #2. modeling
 model=Sequential()
-model.add(Conv2D(filters=32, kernel_size=(3,3), input_shape=INPUT_SHAPE, activation='relu'))
-model.add(BatchNormalization())
-model.add(Conv2D(filters=32, kernel_size=(4,4), input_shape=INPUT_SHAPE, activation='relu'))
-model.add(BatchNormalization())
-model.add(Dropout(0.3))
+model = Sequential()
+model.add(Conv2D(100, (3,3), input_shape=(32,32,3))) #27, 27, 10
+                        #shape = (batch_size, rows, columns, channels) #batch_size : 훈련시킬 데이터의 갯수
+                        #shape = (batch_size, heights, widths, channels) #다음에 넘어갈 때는 height, widhts, filter 로 받아들임
 
-model.add(Conv2D(filters=64, kernel_size=(5,5), input_shape=INPUT_SHAPE, activation='relu'))
-model.add(BatchNormalization())
-model.add(Conv2D(filters=64, kernel_size=(4,4), input_shape=INPUT_SHAPE, activation='relu'))
-model.add(BatchNormalization())
-model.add(Dropout(0.3))
+model.add(Conv2D(filters=50, kernel_size=(3,3))) # 25, 25, 20
+model.add(Conv2D(20, (2,2))) # 22, 22, 15
+model.add(Flatten()) # 모양만 바꾼거기 때문에 연산량 0
 
-model.add(Conv2D(filters=128, kernel_size=(3,3), input_shape=INPUT_SHAPE, activation='relu'))
-model.add(BatchNormalization())
-model.add(Conv2D(filters=128, kernel_size=(3,3), input_shape=INPUT_SHAPE, activation='relu'))
-model.add(BatchNormalization())
-model.add(Dropout(0.3))
-
-model.add(Flatten())
-# model.add(Dropout(0.2))
-model.add(Dense(128, activation='relu'))
-model.add(Dropout(0.3))
+model.add(Dense(units=100)) #None, 22, 22, 8 #Dense가 2차원이지만 2차원 이상 다 가능함
+model.add(Dropout(0.2))
+model.add(Dense(units=10,)) #22, 22, 9
+                        #shpae = (batch_size, input_dim)
 model.add(Dense(100, activation='softmax'))
+                        
+# model.summary()
 # model= load_model('./_save/keras35/k35_07/best/k35_07_0731_1037_0029-1.8593.hdf5')
 
 # model.add(Conv2D(64, (3,3), activation='relu', input_shape=(32, 32, 3))) 
@@ -109,36 +101,36 @@ model.add(Dense(100, activation='softmax'))
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy', 'acc', 'mse'])
 
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-es = EarlyStopping(monitor='val_loss', mode='min', patience=30, verbose=1, restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', mode='min', patience=100, verbose=1, restore_best_weights=True)
 
-################## mcp 세이브 파일명 만들기 시작 ###################
-import datetime
-date = datetime.datetime.now()
-print(date) #2024-07-26 16:49:57.565880
-print(type(date)) #<class 'datetime.datetime'>
-date = date.strftime("%m%d_%H%M")
-print(date) #0726_1654
-print(type(date)) #<class 'str'>
+# ################## mcp 세이브 파일명 만들기 시작 ###################
+# import datetime
+# date = datetime.datetime.now()
+# print(date) #2024-07-26 16:49:57.565880
+# print(type(date)) #<class 'datetime.datetime'>
+# date = date.strftime("%m%d_%H%M")
+# print(date) #0726_1654
+# print(type(date)) #<class 'str'>
 
-path = 'C:\\ai5\\_save\\keras35\\k35_07\\'
-filename ='{epoch:04d}-{val_loss:.4f}.hdf5'   #1000-0.7777.hdf5
-filepath = "".join([path, 'k35_07_', date, '_' , filename])
-#생성 예 : ./_save/keras29_mcp/k29_0726_1654_1000-0.7777.hdf5
-################## mcp 세이브 파일명 만들기 끝 ###################
+# path = 'C:\\ai5\\_save\\keras35\\k35_07\\'
+# filename ='{epoch:04d}-{val_loss:.4f}.hdf5'   #1000-0.7777.hdf5
+# filepath = "".join([path, 'k35_07_', date, '_' , filename])
+# #생성 예 : ./_save/keras29_mcp/k29_0726_1654_1000-0.7777.hdf5
+# ################## mcp 세이브 파일명 만들기 끝 ###################
 
-mcp=ModelCheckpoint(
-    monitor='val_loss',
-    mode='auto',
-    verbose = 1,
-    save_best_only=True,
-    filepath=filepath)
+# mcp=ModelCheckpoint(
+#     monitor='val_loss',
+#     mode='auto',
+#     verbose = 1,
+#     save_best_only=True,
+#     filepath=filepath)
 
 
-start_time=time.time()
-hist=model.fit(x_train, y_train, epochs=3000, batch_size=400, validation_split=0.2, callbacks=[es, mcp])
-end_time=time.time()
+# start_time=time.time()
+hist=model.fit(x_train, y_train, epochs=3000, batch_size=12000, validation_split=0.2, callbacks=[es])
+# end_time=time.time()
 
-model.save('./_save/keras35/keras35_07_mcp.hdf5')
+# model.save('./_save/keras35/keras35_07_mcp.hdf5')
 
 #4. predict
 
@@ -150,10 +142,10 @@ y_predict = np.argmax(y_predict, axis=1).reshape(-1,1)
 
 
 from sklearn.metrics import r2_score, accuracy_score
-accuracy_score = accuracy_score(y_test, y_predict)
-print("loss : ", loss[0])
-print("ACC : ", round(loss[1], 3))
-# print("걸린 시간 : ", round(end_time - start_time, 2), "초") # round 함수 : 반올림, 뒤에 숫자는 소수 자리 수
+# accuracy_score = accuracy_score(y_test, y_predict)
+# print("loss : ", loss[0])
+# print("ACC : ", round(loss[1], 3))
+# # print("걸린 시간 : ", round(end_time - start_time, 2), "초") # round 함수 : 반올림, 뒤에 숫자는 소수 자리 수
 
 
 #loss :  1.8817185163497925

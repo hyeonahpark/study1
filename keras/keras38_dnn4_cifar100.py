@@ -32,6 +32,9 @@ print(x_test.shape, y_test.shape) # (10000, 32, 32, 3) (10000, 1)
     #    500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
     #    500, 500, 500, 500, 500, 500, 500, 500, 500], dtype=int64))
     
+x_train = x_train.reshape(50000,32*32*3)
+x_test = x_test.reshape(10000,32*32*3)
+
 # #### 스케일링 1-1 ######
 x_train = x_train/255.
 x_test = x_test/255.
@@ -50,60 +53,24 @@ x_test = x_test/255.
 # x_test = scaler.transform(x_test)
 # print(np.max(x_train), np.min(x_train)) #1.0,  0.0
 
-x_train = x_train.reshape(50000,32,32,3)
-x_test = x_test.reshape(10000,32,32,3)
+
 
 from sklearn.preprocessing import OneHotEncoder
 ohe = OneHotEncoder(sparse=False) #sparse=True가 기본값
 y_train= ohe.fit_transform(y_train.reshape(-1,1))
 y_test= ohe.fit_transform(y_test.reshape(-1,1))
 
-KERNEL_SIZE = (2, 2)
-INPUT_SHAPE = (32, 32, 3)
 
 #2. modeling
 model=Sequential()
-model.add(Conv2D(filters=32, kernel_size=(3,3), input_shape=INPUT_SHAPE, activation='relu'))
-model.add(BatchNormalization())
-model.add(Conv2D(filters=32, kernel_size=(4,4), input_shape=INPUT_SHAPE, activation='relu'))
-model.add(BatchNormalization())
-model.add(Dropout(0.3))
-
-model.add(Conv2D(filters=64, kernel_size=(5,5), input_shape=INPUT_SHAPE, activation='relu'))
-model.add(BatchNormalization())
-model.add(Conv2D(filters=64, kernel_size=(4,4), input_shape=INPUT_SHAPE, activation='relu'))
-model.add(BatchNormalization())
-model.add(Dropout(0.3))
-
-model.add(Conv2D(filters=128, kernel_size=(3,3), input_shape=INPUT_SHAPE, activation='relu'))
-model.add(BatchNormalization())
-model.add(Conv2D(filters=128, kernel_size=(3,3), input_shape=INPUT_SHAPE, activation='relu'))
-model.add(BatchNormalization())
-model.add(Dropout(0.3))
-
-model.add(Flatten())
-# model.add(Dropout(0.2))
-model.add(Dense(128, activation='relu'))
-model.add(Dropout(0.3))
+model.add(Dense(128, input_shape=(32*32*3, )))
+model.add(Dense(200,  activation = 'relu'))
+model.add(Dense(300,  activation = 'relu'))
+model.add(Dense(600,  activation = 'relu'))
+model.add(Dense(300,  activation = 'relu'))
+model.add(Dense(200,  activation = 'relu'))
+model.add(Dense(100, activation = 'relu'))
 model.add(Dense(100, activation='softmax'))
-# model= load_model('./_save/keras35/k35_07/best/k35_07_0731_1037_0029-1.8593.hdf5')
-
-# model.add(Conv2D(64, (3,3), activation='relu', input_shape=(32, 32, 3))) 
-#                         #shape = (batch_size, rows, columns, channels) #batch_size : 훈련시킬 데이터의 갯수
-#                         #shape = (batch_size, heights, widths, channels) #다음에 넘어갈 때는 height, widhts, filter 로 받아들임
-# model.add(Conv2D(filters=64, activation='relu', kernel_size=(3,3))) 
-# model.add(Dropout(0.3))
-# model.add(Conv2D(32, (2,2), activation='relu')) 
-# model.add(Dropout(0.3))
-# model.add(Conv2D(32, (2,2), activation='relu')) 
-# model.add(Dropout(0.3))
-# model.add(Conv2D(32, (2,2), activation='relu')) 
-# model.add(Flatten()) # 모양만 바꾼거기 때문에 연산량 0  
-# model.add(Dense(units=32, activation='relu')) 
-# model.add(Dense(units=16, input_shape=(32,), activation='relu')) 
-#                         #shpae = (batch_size, input_dim)
-# model.add(Dropout(0.3))
-# model.add(Dense(10, activation='softmax'))
 
 #3. compile
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy', 'acc', 'mse'])
@@ -120,9 +87,9 @@ date = date.strftime("%m%d_%H%M")
 print(date) #0726_1654
 print(type(date)) #<class 'str'>
 
-path = 'C:\\ai5\\_save\\keras35\\k35_07\\'
+path = 'C:\\ai5\\_save\\keras38\\k38_04\\'
 filename ='{epoch:04d}-{val_loss:.4f}.hdf5'   #1000-0.7777.hdf5
-filepath = "".join([path, 'k35_07_', date, '_' , filename])
+filepath = "".join([path, 'k38_04_', date, '_' , filename])
 #생성 예 : ./_save/keras29_mcp/k29_0726_1654_1000-0.7777.hdf5
 ################## mcp 세이브 파일명 만들기 끝 ###################
 
@@ -138,7 +105,7 @@ start_time=time.time()
 hist=model.fit(x_train, y_train, epochs=3000, batch_size=400, validation_split=0.2, callbacks=[es, mcp])
 end_time=time.time()
 
-model.save('./_save/keras35/keras35_07_mcp.hdf5')
+# model.save('./_save/keras38/keras38_04_mcp.hdf5')
 
 #4. predict
 
@@ -153,7 +120,7 @@ from sklearn.metrics import r2_score, accuracy_score
 accuracy_score = accuracy_score(y_test, y_predict)
 print("loss : ", loss[0])
 print("ACC : ", round(loss[1], 3))
-# print("걸린 시간 : ", round(end_time - start_time, 2), "초") # round 함수 : 반올림, 뒤에 숫자는 소수 자리 수
+print("걸린 시간 : ", round(end_time - start_time, 2), "초") # round 함수 : 반올림, 뒤에 숫자는 소수 자리 수
 
 
 #loss :  1.8817185163497925
@@ -161,3 +128,15 @@ print("ACC : ", round(loss[1], 3))
 
 # loss :  2.9173665046691895
 # ACC :  0.32
+
+
+
+
+
+#dnn
+#loss :  3.3785929679870605
+# ACC :  0.206
+# 걸린 시간 :  55.58 초
+
+# loss :  3.331902265548706
+# ACC :  0.211
