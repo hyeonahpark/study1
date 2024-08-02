@@ -168,7 +168,7 @@ print("걸린 시간 : ", round(end_time - start_time, 2), "초") # round 함수
 # loss :  0.24803583323955536
 # ACC :  0.922
 
-#hamsu
+#cnn
 # loss :  0.2666468918323517
 # ACC :  0.92
 # 걸린 시간 :  270.33 초

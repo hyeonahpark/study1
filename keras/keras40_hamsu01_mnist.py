@@ -113,11 +113,12 @@ dense4 = Conv2D(32, (3,3), activation='relu', padding='same')(drop1) # 23, 23, 3
 maxp4 = MaxPool2D()(dense4)
 drop2 = Dropout(0.25)(maxp4)
 dense5 = Flatten()(drop2) # 모양만 바꾼거기 때문에 연산량 0  #23*23*32
-dense6 = Dense(units=32, activation='relu')(dense5) #None, 22, 22, 8 #Dense가 2차원이지만 2차원 이상 다 가능함
-dense7 = Dense(units=16, input_shape=(32, ), activation='relu')(dense6)
+dense6 = (Dropout(0.5))(dense5)
+dense7 = Dense(units=32, activation='relu')(dense6) #None, 22, 22, 8 #Dense가 2차원이지만 2차원 이상 다 가능함
+dense8 = Dense(units=16, input_shape=(32, ), activation='relu')(dense7)
                         #shpae = (batch_size, input_dim)
-dense8 = (Dropout(0.25))(dense7)
-output1 = Dense(10, activation='softmax')(dense8)     
+dense9 = (Dropout(0.25))(dense8)
+output1 = Dense(10, activation='softmax')(dense9)     
 model = Model(inputs=input1, outputs = output1)
                         
                         
@@ -203,3 +204,7 @@ print("걸린 시간 : ", round(end_time - start_time, 2), "초") # round 함수
 # loss :  0.18017597496509552
 # ACC :  0.96
 # 걸린 시간 :  47.54 초
+
+# loss :  0.05910839885473251
+# ACC :  0.984
+# 걸린 시간 :  103.99 초

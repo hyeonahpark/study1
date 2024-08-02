@@ -8,6 +8,7 @@ import pandas as pd
 # print("y_train[0] : ", y_train[0]) #5
 
 
+
 print(x_train.shape, y_train.shape) # (60000, 28, 28) (60000,) -> (60000,28,28,1) 과 동일. 데이터의 값과 순서의 변화가 없기 때문
 print(x_test.shape, y_test.shape) # (10000, 28, 28) (10000,)
 

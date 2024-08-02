@@ -96,7 +96,6 @@ output1=Dense(100, activation='softmax')(drop4)
 model = Model(inputs=input1, outputs = output1)   
 
 
-
 #3. compile
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy', 'acc', 'mse'])
 
@@ -174,3 +173,7 @@ print("ACC : ", round(loss[1], 3))
 #hamsu
 # loss :  1.7685941457748413
 # ACC :  0.537
+
+# loss :  1.7509618997573853
+# ACC :  0.539
+

@@ -52,17 +52,12 @@ print(np.unique(y, return_counts=True)) #이렇게 작성해서 바로 출력해
 x=x.to_numpy()
 x=x.reshape(200000,50,4,1)
 x=x/255.
+y=pd.get_dummies(y)
 
 x_train, x_test, y_train, y_test= train_test_split(x, y, test_size=0.2, random_state=1186)
 
 # print(x_train.shape, y_train.shape) # (180000, 200) (180000,)
 # print(x_test.shape, y_test.shape) # (20000, 200) (20000,)
-
-from sklearn.preprocessing import MinMaxScaler
-# scaler=MinMaxScaler()
-# scaler.fit(x_train)
-# x_train = scaler.transform(x_train) 
-# x_test = scaler.transform(x_test)
 
 
 # # #2. modeling
@@ -88,7 +83,7 @@ model.add(Dense(units=32, activation='relu'))
 model.add(Dense(units=16, input_shape=(32, ), activation='relu')) 
                         #shpae = (batch_size, input_dim)
 model.add(Dropout(0.25))
-model.add(Dense(10, activation='sigmoid'))
+model.add(Dense(2, activation='sigmoid'))
 
 
 #3. compile
@@ -133,14 +128,14 @@ print("loss : ", loss[0])
 print("ACC : ", round(loss[1], 3))
 
 # y_pred = model.predict(x_test) 
-result = model.predict(test_csv)
-result = np.round(result)  # 사이킷런의 acc 평가지표는 정수만 받음. 분류 데이터는 분류 값만 넣으라는 에러 발생, 따라서 반올림함.
+# result = model.predict(test_csv)
+# result = np.round(result)  # 사이킷런의 acc 평가지표는 정수만 받음. 분류 데이터는 분류 값만 넣으라는 에러 발생, 따라서 반올림함.
 # print(y_pred)
 
 from sklearn.metrics import r2_score, accuracy_score
 print("걸린 시간 : ", round(end_time - start_time, 2), "초") # round 함수 : 반올림, 뒤에 숫자는 소수 자리 수
 
-sample_submission['target'] = result
+# sample_submission['target'] = result
 # sample_submission.to_csv(path + "submission_0724_6.csv")
 
 
@@ -150,3 +145,7 @@ sample_submission['target'] = result
 #dropout
 # loss :  0.24040205776691437
 # ACC :  0.911
+
+# loss :  0.2420801967382431
+# ACC :  0.911
+# 걸린 시간 :  96.17 초

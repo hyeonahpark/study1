@@ -77,17 +77,17 @@ model.add(Conv2D(filters=64, activation='relu', kernel_size=(3,3), padding='same
 # model.add(BatchNormalization())
 model.add(Conv2D(filters=32, activation='relu', kernel_size=(3,3), padding='same')) 
 # model.add(MaxPool2D())
-model.add(Dropout(0.25))
+model.add(Dropout(0.3))
 model.add(Conv2D(32, (3,3), activation='relu', padding='same')) 
 # model.add(MaxPool2D())
 # model.add(BatchNormalization())
-model.add(Dropout(0.25))
+model.add(Dropout(0.3))
 model.add(Flatten()) # 모양만 바꾼거기 때문에 연산량 0  #23*23*32
 model.add(Dense(units=32, activation='relu'))
 model.add(Dense(units=16, input_shape=(32, ), activation='relu')) 
                         #shpae = (batch_size, input_dim)
-model.add(Dropout(0.25))
-model.add(Dense(10, activation='softmax'))
+model.add(Dropout(0.3))
+model.add(Dense(9, activation='softmax'))
 
 
 #3. compile
@@ -158,3 +158,10 @@ print("걸린 시간 : ", round(end_time - start_time, 2), "초")
 
 # loss :  0.6233358979225159
 # ACC :  0.783
+
+# loss :  0.5623487234115601
+# ACC :  0.78
+
+#cnn
+# loss :  0.561005711555481
+# ACC :  0.787

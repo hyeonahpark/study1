@@ -70,17 +70,17 @@ from keras.layers import Dropout
 model=Sequential()
 model.add(Conv2D(64, (3,3), input_shape=(9, 6, 1), activation='relu', padding='same'))
 model.add(Conv2D(filters=64, kernel_size=(3,3), activation='relu', padding='same')) 
-model.add(Dropout(0.25))
+model.add(Dropout(0.3))
 model.add(Conv2D(filters=32, kernel_size=(3,3), activation='relu', padding='same')) 
 # model.add(MaxPool2D())
-model.add(Dropout(0.25))
+model.add(Dropout(0.3))
 model.add(Conv2D(32, (3,3), activation='relu', padding='same')) 
 # model.add(MaxPool2D())
 # model.add(BatchNormalization())
-model.add(Dropout(0.25))
+model.add(Dropout(0.3))
 model.add(Flatten()) # 모양만 바꾼거기 때문에 연산량 0  #23*23*32
 model.add(Dense(units=32))
-model.add(Dropout(0.3))
+model.add(Dropout(0.5))
 model.add(Dense(units=16, input_shape=(32, ))) 
                         #shpae = (batch_size, input_dim)
 model.add(Dense(7, activation='softmax'))
@@ -145,3 +145,5 @@ print("걸린 시간 : ", round(end_time - start_time, 2), "초") # round 함수
 
 
 #cnn
+# loss :  0.2420801967382431
+# ACC :  0.911
