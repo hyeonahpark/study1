@@ -165,3 +165,5 @@ print("걸린 시간 : ", round(end_time - start_time, 2), "초")
 #cnn
 # loss :  0.561005711555481
 # ACC :  0.787
+
+
