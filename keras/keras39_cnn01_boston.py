@@ -54,6 +54,7 @@ model=Sequential()
 model.add(Conv1D(64, (3), input_shape=(13, 1, 1), padding='same')) 
                         #shape = (batch_size, rows, columns, channels) #batch_size : 훈련시킬 데이터의 갯수
                         #shape = (batch_size, heights, widths, channels) #다음에 넘어갈 때는 height, widhts, filter 로 받아들임
+                        #가중치 = 커널사이즈
 # model.add(MaxPool2D())
 # model.add(BatchNormalization())
 model.add(Conv1D(filters=64, kernel_size=(3), padding='same')) 

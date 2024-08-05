@@ -1,16 +1,26 @@
-#https://www.kaggle.com/competitions/dogs-vs-cats-redux-kernels-edition/leaderboard
+"""
+keras49_augument2_mnist.py
+keras49_augument3_cifar10.py
+keras49_augument4_cifar100.py
+keras49_augument5_cat_dog.py
+keras49_augument6_men_women.py
+keras49_augument7_horse.py
+keras49_augument8_rps.py
 
-import numpy as np
+cat_dog는 image 폴더꺼 수치화하고, 캐글 폴더꺼 수치화해서 합치고 증폭 1만개 추가
+"""
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPool2D, BatchNormalization
+import numpy as np
+import matplotlib.pyplot as plt
 import time
+from tensorflow.keras.layers import Dropout, Conv2D, Flatten, MaxPool2D, BatchNormalization
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 import pandas as pd
-import os
 
-#1. data (시간체크)
 start_time=time.time()
+
 train_datagen = ImageDataGenerator(
     rescale=1./255,         # 이미지 스케일링
     horizontal_flip= True,  # 수평 뒤집기
@@ -26,60 +36,113 @@ train_datagen = ImageDataGenerator(
 test_datagen = ImageDataGenerator(
     rescale=1./255,
 )
-
-path_train = 'C:\\ai5\\_data\\kaggle\\dogs-vs-cats-redux-kernels-edition\\train\\'
+path_image = 'C:\\ai5\\_data\\image\\cat_and_dog\\Train\\'
+path_kaggle_cat_dog = 'C:\\ai5\\_data\\kaggle\\dogs-vs-cats-redux-kernels-edition\\train\\'
 path_test = 'C:\\ai5\\_data\\kaggle\\dogs-vs-cats-redux-kernels-edition\\test\\'
 path_submission = 'C:\\ai5\\_data\\kaggle\\dogs-vs-cats-redux-kernels-edition\\'
 sample_submission=pd.read_csv(path_submission + "sample_submission.csv", index_col=0)
 
-xy_train1 = train_datagen.flow_from_directory(
-    path_train, 
-    target_size=(100,100),
+xy_train1 = test_datagen.flow_from_directory(
+    path_image, 
+    target_size=(80,80),
     batch_size=25000,
     class_mode='binary',
     color_mode='rgb', 
     shuffle=True, # False로 할 경우 print(xy_train) 값이 array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0.], dtype=float32)) -> 다 0으로 됨
-)  # Found 25000 images belonging to 2 classes.
+)  # Found 160 images belonging to 2 classes.
 
 xy_train2 = test_datagen.flow_from_directory(
-    path_train,            
-    target_size=(100,100),  
-    batch_size=25000,          
-    class_mode='binary',  
-    color_mode='rgb',  
-    shuffle=True, 
-)
+    path_kaggle_cat_dog, 
+    target_size=(80,80),
+    batch_size=25000,
+    class_mode='binary',
+    color_mode='rgb', 
+    shuffle=True, # False로 할 경우 print(xy_train) 값이 array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0.], dtype=float32)) -> 다 0으로 됨
+)  # Found 160 
 
 xy_test = test_datagen.flow_from_directory(
     path_test, 
-    target_size=(100,100),
-    batch_size=12500,
+    target_size=(80,80),
+    batch_size=20000,
     class_mode='binary',
-    color_mode='rgb',
-    shuffle=False, # 어지간하면 셔플할 필요 없음.
-)  # Found 12500 images belonging to 1 classes.
+    color_mode='rgb', 
+    shuffle=True, # False로 할 경우 print(xy_train) 값이 array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0.], dtype=float32)) -> 다 0으로 됨
+)  
+np_path = 'c:/ai5/_data/_save_npy/augment_cat_dog/'
 
-x = np.concatenate((xy_train1[0][0][:5000],xy_train2[0][0]))
-y = np.concatenate((xy_train1[0][1][:5000],xy_train2[0][1]))
+# np.save(np_path + 'keras49_05_x_train1.npy', arr=xy_train1[0][0])
+# np.save(np_path + 'keras49_05_y_train1.npy', arr=xy_train1[0][1])
+# np.save(np_path + 'keras49_05_x_train2.npy', arr=xy_train2[0][0])
+# np.save(np_path + 'keras49_05_y_train2.npy', arr=xy_train2[0][1])
+# np.save(np_path + 'keras49_05_x_test.npy', arr=xy_test[0][0])
+# np.save(np_path + 'keras49_05_y_test.npy', arr=xy_test[0][1])
+
+
+x_train1 = np.load(np_path + 'keras49_05_x_train1.npy')
+y_train1 = np.load(np_path + 'keras49_05_y_train1.npy')
+x_train2 = np.load(np_path + 'keras49_05_x_train2.npy')
+y_train2 = np.load(np_path + 'keras49_05_y_train2.npy')
+x_test = np.load(np_path + 'keras49_05_x_test.npy')
+y_test = np.load(np_path + 'keras49_05_y_test.npy')
+
+x = np.concatenate((x_train1,x_train2))
+y = np.concatenate((y_train1,y_train2))
+
+print(x.shape, y.shape) # (44997, 80, 80, 3) (44997,)
+
+
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.9, random_state=1186)
 
-# x_train=xy_train[0][0]
-# y_train=xy_train[0][1]
-# x_test=xy_test[0][0]
-# y_test=xy_test[0][1]
+augment_size = 5000 
+print(x_train.shape[0])  #40497
+randidx=np.random.randint(x_train.shape[0], size = augment_size) # 이미지 1장 # 60000, size = 40000
+# print(randidx) # [31998 12497 32753 ... 32228 21276 28073]
+# print(np.min(randidx), np.max(randidx)) # randidx의 최솟값과 최댓값 출력 1, 59991 
 
-# print(xy_train[0][0].shape)  #(25000, 100, 100, 3)
-# print(xy_train[0][1].shape)  #(25000, )
-end_time=time.time()
-print("데이터 처리 걸린 시간 :", round(end_time-start_time,2),'초') #99.73초
+print(x_train[0].shape) # (80, 80, 3)
+
+x_augmented = x_train[randidx].copy() #.copy하면 메모리를 따로 할당하므로 원래 있던 x_train 값에 영향을 미치지 않음.
+y_augmented = y_train[randidx].copy() 
+print(x_augmented.shape, y_augmented.shape) # (5000, 80, 80, 3) (5000,)
+ 
+x_augmented = x_augmented.reshape(
+    x_augmented.shape[0], #
+    x_augmented.shape[1], #
+    x_augmented.shape[2], 3 #
+)
+
+print(x_augmented.shape) # (5000, 80, 80, 3)
+
+ 
+x_augmented = train_datagen.flow(
+    x_augmented, y_augmented,
+    batch_size=augment_size,
+    shuffle=False,
+    save_to_dir='c:/ai5/_data/_save_img/05_cat_dog/'
+).next()[0]
+
+"""
+print(x_augmented.shape) # (5000, 80, 80, 3)
+
+x_train = x_train.reshape(40497,80,80,3)
+x_test = x_test.reshape(4500,80,80,3)
+
+print(x_train.shape, x_test.shape) #(40497, 80, 80, 3) (4500, 80, 80, 3)
+ 
+x_train = np.concatenate((x_train, x_augmented))
+print(x_train.shape) #(45497, 80, 80, 3)
+
+y_train = np.concatenate((y_train, y_augmented))
+print(y_train.shape) #(45497,)
+
 
 xy_test=xy_test[0][0]
 
 # #2. modeling
 model = Sequential()
 
-model.add(Conv2D(32, (3,3), activation='relu', input_shape=(100, 100, 3), padding='same')) 
+model.add(Conv2D(32, (3,3), activation='relu', input_shape=(80, 80, 3), padding='same')) 
 model.add(MaxPool2D())
 model.add(Dropout(0.25))
 
@@ -122,9 +185,9 @@ print(date) #0726_1654
 print(type(date)) #<class 'str'>
 
 
-path = 'C:\\ai5\\_save\\keras42\\k42_01\\'
+path = 'C:\\ai5\\_save\\keras49\\k49_05_cat_dog\\'
 filename ='{epoch:04d}-{val_loss:.4f}.hdf5'   #1000-0.7777.hdf5
-filepath = "".join([path, 'k42_01_', date, '_' , filename])
+filepath = "".join([path, 'k49_05_', date, '_' , filename])
 #생성 예 : ./_save/keras29_mcp/k29_0726_1654_1000-0.7777.hdf5
 ################## mcp 세이브 파일명 만들기 끝 ################### 
 
@@ -145,7 +208,6 @@ model.fit(x_train, y_train, epochs=1000, batch_size=16, validation_split=0.2, ca
 #                     validation_steps=50)
 end_time=time.time()
 
-# model.save('./_save/keras39/k39_07/keras39_07_mcp.hdf5')
 
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test, verbose=1)
@@ -167,4 +229,6 @@ y_submit = np.clip(y_submit, 1e-6, 1-(1e-6))
 
 # print(y_submit)
 sample_submission['label'] = y_submit
-sample_submission.to_csv(path_submission + "sampleSubmission_0803_11.csv")
+sample_submission.to_csv(path_submission + "sampleSubmission_0806_02.csv")
+
+"""

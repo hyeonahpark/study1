@@ -78,10 +78,30 @@ model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy',
 
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 es = EarlyStopping(monitor='val_loss', mode='min', patience=30, verbose=1, restore_best_weights=True)
+################## mcp 세이브 파일명 만들기 시작 ###################
+import datetime
+date = datetime.datetime.now()
+print(date) #2024-07-26 16:49:57.565880
+print(type(date)) #<class 'datetime.datetime'>
+date = date.strftime("%m%d_%H%M")
+print(date) #0726_1654
+print(type(date)) #<class 'str'>
 
+
+path = 'C:\\ai5\\_save\\keras44\\k44_01\\'
+filename ='{epoch:04d}-{val_loss:.4f}.hdf5'   #1000-0.7777.hdf5
+filepath = "".join([path, 'k44_01_', date, '_' , filename])
+#생성 예 : ./_save/keras29_mcp/k29_0726_1654_1000-0.7777.hdf5
+################## mcp 세이브 파일명 만들기 끝 ###################
+mcp=ModelCheckpoint(
+    monitor='val_loss',
+    mode='auto',
+    verbose = 1,
+    save_best_only=True,
+    filepath=filepath)
 
 start_time=time.time()
-hist=model.fit(x_train, y_train, epochs=3000, batch_size=20, validation_split=0.3, callbacks=[es])
+hist=model.fit(x_train, y_train, epochs=3000, batch_size=20, validation_split=0.3, callbacks=[es, mcp])
 end_time=time.time()
 
 #4. predict

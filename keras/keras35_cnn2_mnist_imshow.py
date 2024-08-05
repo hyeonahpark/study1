@@ -19,3 +19,4 @@ print(pd.value_counts(y_test))
 import matplotlib.pyplot as plt
 plt.imshow(x_train[1], 'gray') #gray : 흑백
 plt.show()
+
