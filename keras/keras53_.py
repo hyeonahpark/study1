@@ -30,7 +30,6 @@ model.add(Dense(13))
 model.add(Dense(15))
 model.add(Dense(1))
 
-
 #3.compile
 model.compile(loss='mse', optimizer='adam')
 model.fit(x,y, epochs=10000, batch_size=10)
