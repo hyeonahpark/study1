@@ -1,38 +1,33 @@
 import numpy as np
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, SimpleRNN, LSTM, GRU
+from tensorflow.keras.layers import Dense, LSTM
 
-#RNN은 바로 Dense와 연결 가능. 들어갈 때 3차원, 나올 때 2차원
-#DNN 2차원, CNN 4차원, 
+a = np.array(range(1,11))
+# print(a) #[ 1  2  3  4  5  6  7  8  9 10]
+size = 4
 
-#1. data
-datasets = np.array([1,2,3,4,5,6,7,8,9,10])
-# print(datasets.shape) #(10, )
-x = np.array([[1,2,3],
-              [2,3,4],
-              [3,4,5],
-              [4,5,6],
-              [5,6,7],
-              [6,7,8],
-              [7,8,9]] 
-             )
 
-# for i in range(len(datasets) - 3):
-#     x = (datasets[i:i+3])
-#     y =(datasets[i+3]) 
-#     print(x)
+def split_x(dataset, size) :
+    aaa=[]
+    for i in range(len(dataset)-size+1):
+        subset = dataset[i: (i+size)]
+        aaa.append(subset)
+    return np.array(aaa)
 
-y = np.array([4,5,6,7,8,9,10])
 
-print(x.shape, y.shape) # (7, 3) (7,)
+bbb = split_x(a, size)
+# print(bbb)
+# print(bbb.shape)
 
+x=bbb[:, :-1]
+y=bbb[:, -1]
+print(x, y)
+# print(x)
+print(x.shape, y.shape)  #(7, 3) (7,)
 x = x.reshape(7, 3, 1)
-# x = x.reshape(x.shape[0],x.shape[1], 1)
-# print(x.shape) # (7, 3, 1)
 
-# 3-D tensor with shape (batch_size, timesteps, features.)
 
-#2.modeling
+#2. MODELING
 model=Sequential()
 # model.add(SimpleRNN(10, input_shape=(3,1))) #데이터의 갯수 7을 빼고 나머지를 shape에 넣어줌, #3 : timesteps, features
 model.add(LSTM(15, input_shape=(3,1))) #LSTM 사용
@@ -58,17 +53,10 @@ model.fit(x,y, epochs=15000)
 results=model.evaluate(x,y)
 print('loss:', results)
 
-x_pred=np.array([8,9,10]).reshape(1,3,1) #(1,3,1)
+x_pred=np.array([8,9,10]).reshape(1,3,1) #(1, 4, 1)
 y_pred = model.predict(x_pred)
 print('[8,9,10]의 결과 : ', y_pred) 
 
-"""
-#SimpleRNN
-#[[10.915646]]
 
-#LSTM
-# [8,9,10]의 결과 :  [[10.96187]]
-
-#GRU
-#[8,9,10]의 결과 :  [[10.944982]]
-"""
+#loss: 2.2481647192762466e-06
+#[8,9,10]의 결과 :  [[10.957633]]
