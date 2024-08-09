@@ -168,6 +168,8 @@ print("RMSE :", rmse)
 #RMSE : 0.6372527017565991, batch 400, loss :0.21237652003765106, patience 30
 
 #standardscaler
-#RMSE : 3.349785771425728
+#RMSE : 3.349785771425728, loss 367.75457763671875
 
 #minmaxscaler
+#
+
