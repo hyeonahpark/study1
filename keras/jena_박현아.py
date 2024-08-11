@@ -13,9 +13,9 @@ from tensorflow.keras.layers import LSTM, Dense, Flatten, GRU
 import time
 
 os.environ["TF_GPU_ALLOCATOR"] = "cuda_malloc_async"
-path_submission = "C:\\ai5\\_data\\kaggle\\jena\\"
+path_data = "C:\\ai5\\_data\\kaggle\\jena\\"
 
-dataset=pd.read_csv(path_submission + "jena_climate_2009_2016.csv", index_col=0)
+dataset=pd.read_csv(path_data + "jena_climate_2009_2016.csv", index_col=0)
 
 # print(sample_submission) 
 # print(sample_submission.shape) #(420551, 14)
@@ -103,21 +103,21 @@ model=load_model('./_save/keras55/jena_박현아.hdf5')
 # start_time = time.time()
 # #3. compile
 # from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-# es = EarlyStopping(monitor='val_loss', mode='min', patience=10, verbose=1, restore_best_weights=True)
+# es = EarlyStopping(monitor='val_loss', mode='min', patience=20, verbose=1, restore_best_weights=True)
 
-# ################## mcp 세이브 파일명 만들기 시작 ###################
-# import datetime
-# date = datetime.datetime.now()
+################## mcp 세이브 파일명 만들기 시작 ###################
+import datetime
+date = datetime.datetime.now()
 # print(date) #2024-07-26 16:49:57.565880
 # print(type(date)) #<class 'datetime.datetime'>
-# date = date.strftime("%m%d_%H%M")
+date = date.strftime("%m%d_%H%M")
 # print(date) #0726_1654
 # print(type(date)) #<class 'str'>
 
 
 path = 'C:\\ai5\\_save\\keras55\\'
-# filename ='{epoch:04d}-{val_loss:.4f}.hdf5'   #1000-0.7777.hdf5
-# filepath = "".join([path, 'k55_', date, '_' , filename])
+filename ='{epoch:04d}-{val_loss:.4f}.hdf5'   #1000-0.7777.hdf5
+filepath = "".join([path, 'k55_', date, '_' , filename])
 # #생성 예 : ./_save/keras29_mcp/k29_0726_1654_1000-0.7777.hdf5
 # ################## mcp 세이브 파일명 만들기 끝 ###################
 
@@ -130,7 +130,7 @@ path = 'C:\\ai5\\_save\\keras55\\'
 
 
 # model.fit(x_train, y_train, epochs=1000, batch_size=512, validation_split=0.2, callbacks=[es, mcp])
-# end_time = time.time()
+end_time = time.time()
 
 
 #4. 평가, 예측
@@ -157,7 +157,7 @@ print("RMSE :", rmse)
 # print("데이터 처리 걸린 시간 :", round(end_time-start_time,2),'초') #146.38초
 
 ###csv 파일 만들기 ###
-submit = pd.read_csv(path_submission + "jena_climate_2009_2016.csv")
+submit = pd.read_csv(path_data + "jena_climate_2009_2016.csv")
 
 submit = submit[['Date Time','T (degC)']]
 submit = submit.tail(144)
@@ -171,6 +171,7 @@ submit['T (degC)'] = y_pred
 # print(submit.shape)            # (6493, 1)
 
 submit.to_csv(path + "jena_박현아.csv", index = False)
+
 
 
 #RMSE : 1.1558566105864292, 0.23490005731582642, batch 512, unit 128 시작
