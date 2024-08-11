@@ -13,8 +13,8 @@ x_train1=np.load(np_path + 'keras45_07_x_train1.npy')
 y_train1=np.load(np_path + 'keras45_07_y_train1.npy')
 x_train2=np.load(np_path + 'keras45_07_x_train2.npy')
 y_train2=np.load(np_path + 'keras45_07_y_train2.npy')
-x_test2=np.load(np_path + 'keras45_07_x_test.npy')
-y_test2=np.load(np_path + 'keras45_07_y_test.npy')
+x_test2=np.load(np_path + 'keras45_07_x_test2.npy')
+y_test2=np.load(np_path + 'keras45_07_y_test2.npy')
 
 x_train= np.concatenate((x_train1[:5000],x_train2))
 y_train= np.concatenate((y_train1[:5000],y_train2))
@@ -58,7 +58,7 @@ model.add(Dense(1, activation='sigmoid'))
 #3. compile
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy', 'acc', 'mse'])
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-es = EarlyStopping(monitor='val_loss', mode='min', patience=10, verbose=1, restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', mode='min', patience=30, verbose=1, restore_best_weights=True)
 
 ################## mcp 세이브 파일명 만들기 시작 ###################
 import datetime

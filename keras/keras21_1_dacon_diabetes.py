@@ -86,8 +86,6 @@ y_predict = model.predict(x_test)
 y_predict = np.round(y_predict)  # 사이킷런의 acc 평가지표는 정수만 받음. 분류 데이터는 분류 값만 넣으라는 에러 발생, 따라서 반올림함.
 # print(y_predict)
 
-
-
 y_submit = np.round(model.predict(test_csv))
 # print(y_submit)
 # print(y_submit.shape) #(116, 1)
@@ -98,7 +96,7 @@ sample_submission['Outcome'] = y_submit
 # print(sample_submission) 
 # print(sample_submission.shape) # (116, 2)from sklearn.metrics import r2_score
 
-sample_submission.to_csv(path + "submission_0722_7.csv")
+sample_submission.to_csv(path + "submission_0813.csv")
 
 
 from sklearn.metrics import r2_score, accuracy_score
@@ -120,6 +118,7 @@ print("걸린 시간 : ", round(end_time - start_time, 2), "초")
 #loss :  0.5549544095993042, ACC :  0.773, 걸린 시간 :  27.63 초
 #loss :  0.6763560771942139, ACC :  0.773, 걸린 시간 :  63.31 초
 #loss :  0.6377341151237488, ACC :  0.773
+
 #loss :  0.3791206181049347, ACC :  0.818, 걸린 시간 :  48.73 초
 #loss :  0.44093620777130127, ACC :  0.788. 걸린 시간 :  23.02 초
 #loss :  0.4059293866157532, ACC :  0.848, 걸린 시간 :  28.05 초

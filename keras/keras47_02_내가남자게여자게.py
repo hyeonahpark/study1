@@ -45,11 +45,6 @@ y_submit = model.predict(x_test, batch_size=16)
 y_submit = np.clip(y_submit, 1e-6, 1-(1e-6))
 print(y_submit)
 
-np_path = 'c:/ai5/_data/_save_npy/biggest_gender/'
-x_train1=np.load(np_path + 'keras45_07_x_train1.npy')
-y_train1=np.load(np_path + 'keras45_07_y_train1.npy')
-x_train2=np.load(np_path + 'keras45_07_x_train2.npy')
-y_train2=np.load(np_path + 'keras45_07_y_train2.npy')
 
 
 end_time=time.time()

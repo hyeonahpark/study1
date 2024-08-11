@@ -1,6 +1,6 @@
 import numpy as np
 from tensorflow.keras.models import Sequential, load_model
-from tensorflow.keras.layers import Dense, SimpleRNN, LSTM, GRU
+from tensorflow.keras.layers import Dense, SimpleRNN, LSTM, GRU, Bidirectional
 import time
 from keras.models import load_model
 
@@ -18,7 +18,8 @@ x_predict = np.array([50,60,70])
 
 model=Sequential()
 # model.add(SimpleRNN(10, input_shape=(3,1))) #데이터의 갯수 7을 빼고 나머지를 shape에 넣어줌, #3 : timesteps, features
-model.add(LSTM(15, input_length=3, input_dim=1))
+model.add(Bidirectional(LSTM(15, return_sequences=True), input_shape=(3,1)))
+model.add(Bidirectional(LSTM(15)))
 model.add(Dense(13))
 model.add(Dense(11))
 model.add(Dense(9))
@@ -28,8 +29,6 @@ model.add(Dense(11))
 model.add(Dense(13))
 model.add(Dense(15))
 model.add(Dense(1))
-model.summary()
-
 
 #3.compile
 model.compile(loss='mse', optimizer='adam')
@@ -48,8 +47,15 @@ path = "C:\\ai5\\_save\\keras52\\"
 model.save(path + 'k52_model1.h5')
 
 
-# [50,60,70]의 결과 :  [[78.15304]]
-# [50,60,70]의 결과 :  [[77.729004]]
+#loss: 0.0008884485578164458
+# [50,60,70]의 결과 :  [[77.90359]]
 
-# [50,60,70]의 결과 :  [[78.30365]]
+#lstm 2번
+# loss: 0.11316175013780594
+# [50,60,70]의 결과 :  [[78.0855]]
 
+# loss: 2.812367347360123e-05
+# [50,60,70]의 결과 :  [[76.21746]]
+
+#loss: 3.0419974791584536e-05
+# [50,60,70]의 결과 :  [[74.82523]]

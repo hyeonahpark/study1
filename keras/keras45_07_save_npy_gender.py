@@ -47,14 +47,14 @@ xy_train2 = test_datagen.flow_from_directory(
 
 xy_test = test_datagen.flow_from_directory(
     path_test, 
-    target_size=(80,80),
+    target_size=(100,100),
     batch_size=20000,
     class_mode='binary',
     color_mode='rgb',
     shuffle=False, # 어지간하면 셔플할 필요 없음.
 )  # Found 120 images belonging to 2 classes.
 
-np_path = 'c:/ai5/_data/_save_npy/biggest_gender/'
+np_path = 'c:/ai5/_data/_save_npy/biggest_gender2/'
 # np.save(np_path + 'keras45_07_x_train1.npy', arr=xy_train1[0][0])
 # np.save(np_path + 'keras45_07_y_train1.npy', arr=xy_train1[0][1])
 # np.save(np_path + 'keras45_07_x_train2.npy', arr=xy_train2[0][0])

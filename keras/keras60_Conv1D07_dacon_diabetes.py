@@ -1,8 +1,8 @@
 #https://dacon.io/competitions/official/236068
 
 import numpy as np
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Dense, Input, Flatten, Conv2D, Conv1D
 import time
 from sklearn.model_selection import train_test_split
 from keras.callbacks import EarlyStopping
@@ -37,7 +37,7 @@ x=train_csv.drop(['Outcome'], axis=1) #대괄호 하나 안에 다 넣기 ! 두�
 print(x)
 print(x.shape) #(652, 8)
 y=train_csv['Outcome']
-print(y.shape) # (652., )
+print(y.shape) # (652, )
 
 unique,counts=np.unique(y, return_counts=True)
 # print(np.unique(y, return_counts=True) 이렇게 작성해서 바로 출력해도 됨. 출력값 : (array([0, 1]), array([212, 357], dtype=int64))
@@ -45,57 +45,41 @@ unique,counts=np.unique(y, return_counts=True)
 print("고유한 요소:", unique) #고유한 요소: [0 1]
 print("각 요소의 개수:", counts) #각 요소의 개수: [424 228]
 
+x=x.to_numpy()
+x=x.reshape(652,8,1)
+from sklearn.preprocessing import MaxAbsScaler, RobustScaler
+scaler=MaxAbsScaler()
+x = scaler.fit_transform(x.reshape(-1, x.shape[-1])).reshape(x.shape)
+
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.9, random_state=1186)
 
 
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
-from sklearn.preprocessing import MaxAbsScaler, RobustScaler
-
-# scaler=MinMaxScaler()
-scaler=MaxAbsScaler()
-scaler.fit(x_train)
-x_train = scaler.transform(x_train) 
-x_test = scaler.transform(x_test)
-
-
-
-
 #2. modeling
 from keras.layers import Dropout
-# model=Sequential()
-# model.add(Dense(16, input_dim=8, activation='relu')) #activation function 활성화 함수, 한정함수 : 다음레이어에 오는 값의 범위를 한정한다. y=relu(wx+b) , relu 함수는 0보다 낮은 값이 나오면 0으로 나옴.
-# model.add(Dropout(0.3))
-# model.add(Dense(32, activation='relu'))
-# model.add(Dropout(0.3))
-# model.add(Dense(32, activation='relu'))
-# model.add(Dropout(0.3))
-# model.add(Dense(64, activation='relu'))
-# model.add(Dropout(0.3))
-# model.add(Dense(64, activation='relu'))
-# model.add(Dropout(0.3))
-# model.add(Dense(32, activation='relu'))
-# model.add(Dropout(0.3))
-# model.add(Dense(32, activation='relu'))
-# model.add(Dropout(0.3))
-# model.add(Dense(16, activation='relu'))
-# model.add(Dropout(0.3))
-# model.add(Dense(16, activation='relu'))
-# model.add(Dropout(0.3))
-# model.add(Dense(8, activation='relu'))
-# model.add(Dropout(0.3))
-# model.add(Dense(1, activation='sigmoid'))
 model=Sequential()
-model.add(Dense(32, activation='relu', input_dim=8))
-model.add(Dense(32, activation='relu'))
-model.add(Dense(64, activation='relu'))
-model.add(Dense(64, activation='relu'))
-model.add(Dense(128, activation='relu'))
-model.add(Dense(64, activation='relu'))
-model.add(Dense(32, activation='relu'))
-model.add(Dense(16, activation='relu'))
-model.add(Dense(1, activation='sigmoid')) #최종 아웃풋 노드는 0과 1이 나와야 함. activation(한정함수, 활성화함수)를 사용하여 값을 0~1사이로 한정시킴 
-
+model.add(Conv1D(64, (3), input_shape=(8, 1), padding='same')) 
+                        #shape = (batch_size, rows, columns, channels) #batch_size : 훈련시킬 데이터의 갯수
+                        #shape = (batch_size, heights, widths, channels) #다음에 넘어갈 때는 height, widhts, filter 로 받아들임
+                        #가중치 = 커널사이즈
+# model.add(MaxPool2D())
+# model.add(BatchNormalization())
+model.add(Conv1D(filters=64, kernel_size=(2), padding='same')) 
+# model.add(MaxPool2D())
+# model.add(BatchNormalization())
+model.add(Conv1D(filters=32, kernel_size=(2), padding='same')) 
+# model.add(MaxPool2D())
+# model.add(Dropout(0.25))
+model.add(Conv1D(32, (2),  padding='same')) 
+# model.add(MaxPool2D())
+# model.add(BatchNormalization())
+# model.add(Dropout(0.25))
+model.add(Flatten()) # 모양만 바꾼거기 때문에 연산량 0  #23*23*32
+model.add(Dense(units=32))
+model.add(Dense(units=16, input_shape=(32, ))) 
+                        #shpae = (batch_size, input_dim)
+# model.add(Dropout(0.25))
+model.add(Dense(1, activation='sigmoid'))
 
 
 #3. compile
@@ -115,9 +99,9 @@ print(date) #0726_1654
 print(type(date)) #<class 'str'>
 
 
-path = 'C:\\ai5\\_save\\keras32\\k32_06\\'
+path = 'C:\\ai5\\_save\\keras60\\k60_06\\'
 filename ='{epoch:04d}-{val_loss:.4f}.hdf5'   #1000-0.7777.hdf5
-filepath = "".join([path, 'k32_06_', date, '_' , filename])
+filepath = "".join([path, 'k60_06_', date, '_' , filename])
 #생성 예 : ./_save/keras29_mcp/k29_0726_1654_1000-0.7777.hdf5
 ################## mcp 세이브 파일명 만들기 끝 ###################
 
@@ -130,10 +114,10 @@ mcp=ModelCheckpoint(
 
 
 start_time=time.time()
-hist=model.fit(x_train, y_train, epochs=10000, batch_size=1, validation_split=0.3, callbacks=[es, mcp])
+hist=model.fit(x_train, y_train, epochs=1000, batch_size=10, validation_split=0.2, callbacks=[es, mcp])
 end_time=time.time()
 
-# model.save('./_save/keras32/k32_06/keras32_06_mcp.hdf5')
+# model.save('./_save/keras39/k39_06/keras39_06_mcp.hdf5')
 
 
 #4. predict
@@ -146,15 +130,15 @@ y_predict = np.round(y_predict)  # 사이킷런의 acc 평가지표는 정수만
 
 
 
-y_submit = np.round(model.predict(test_csv))
-# print(y_submit)
+y_submit = model.predict(test_csv)
+print(y_submit)
 # print(y_submit.shape) #(116, 1)
 
 #############  submission.csv 만들기 // count 컬럼에 값 넣어주기
 
 sample_submission['Outcome'] = y_submit
-# print(sample_submission) 
-# print(sample_submission.shape) # (116, 2)from sklearn.metrics import r2_score
+print(sample_submission) 
+print(sample_submission.shape) # (116, 2)from sklearn.metrics import r2_score
 
 sample_submission.to_csv(path + "submission_0813.csv")
 
@@ -168,6 +152,19 @@ print("ACC : ", round(loss[1], 3))
 # print("acc_score : ", accuracy_score)
 print("걸린 시간 : ", round(end_time - start_time, 2), "초")
 
+
+
 #dropout
 #loss :  0.5292198061943054
 # ACC :  0.652
+
+
+#cnn
+# loss :  0.5192640423774719
+# ACC :  0.788
+
+
+#cnn1d
+# loss :  0.48689761757850647
+# ACC :  0.788
+# 걸린 시간 :  6.19 초

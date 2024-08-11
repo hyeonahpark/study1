@@ -7,6 +7,7 @@ import time
 from sklearn.model_selection import train_test_split
 from keras.callbacks import EarlyStopping
 import pandas as pd
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 
 
 #1. data
@@ -46,19 +47,15 @@ print("고유한 요소:", unique) #고유한 요소: [0 1]
 print("각 요소의 개수:", counts) #각 요소의 개수: [424 228]
 
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.9, random_state=1186)
-
-
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.preprocessing import MaxAbsScaler, RobustScaler
-
-# scaler=MinMaxScaler()
-scaler=MaxAbsScaler()
-scaler.fit(x_train)
-x_train = scaler.transform(x_train) 
-x_test = scaler.transform(x_test)
+scaler=RobustScaler()
+scaler.fit(x)
+x = scaler.transform(x) 
 
 
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.9, random_state=1186)
 
 
 #2. modeling
@@ -85,10 +82,31 @@ es = EarlyStopping(
     restore_best_weights=True, #작성 안하면 마지막 지점 반환/ True인 경우 가장 좋은 weight 사용
     )
 
+import datetime
+date = datetime.datetime.now()
+print(date) #2024-07-26 16:49:57.565880
+print(type(date)) #<class 'datetime.datetime'>
+date = date.strftime("%m%d_%H%M")
+print(date) #0726_1654
+print(type(date)) #<class 'str'>
+
+path = 'C:\\ai5\\_save\\keras30_mcp\\k30_7\\'
+filename ='{epoch:04d}-{val_loss:.4f}.hdf5'   #1000-0.7777.hdf5
+filepath = "".join([path, 'k30_7_', date, '_' , filename])
+#생성 예 : ./_save/keras29_mcp/k29_0726_1654_1000-0.7777.hdf5
+################## mcp 세이브 파일명 만들기 끝 ###################
+
+mcp=ModelCheckpoint(
+    monitor='val_loss',
+    mode='auto',
+    verbose = 1,
+    save_best_only=True,
+    filepath=filepath)
+
 
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy', 'acc', 'mse'])
 start_time=time.time()
-model.fit(x_train, y_train, epochs=10000, batch_size=1, verbose=1, validation_split=0.1, callbacks=[es])
+model.fit(x_train, y_train, epochs=10000, batch_size=1, verbose=1, validation_split=0.1, callbacks=[es, mcp])
 end_time=time.time()
 
 #4. predict
@@ -111,7 +129,7 @@ sample_submission['Outcome'] = y_submit
 # print(sample_submission) 
 # print(sample_submission.shape) # (116, 2)from sklearn.metrics import r2_score
 
-sample_submission.to_csv(path + "submission_0724_2.csv")
+sample_submission.to_csv(path + "submission_0813.csv")
 
 
 from sklearn.metrics import r2_score, accuracy_score
