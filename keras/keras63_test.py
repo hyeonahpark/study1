@@ -70,7 +70,7 @@ x2= np.delete(x2, -1 , axis = 0)
 y= np.delete(y, 0 , axis = 0)
 
 x1_train, x1_test, x2_train, x2_test, y_train, y_test =train_test_split(
-    x1, x2, y, train_size=0.9, random_state=5656
+    x1, x2, y, train_size=0.9, random_state=1186
 )
 print(x1_train.shape, x2_train.shape, y_train.shape) # (843, 11, 7) (843, 11, 7) (843, 11)
 
