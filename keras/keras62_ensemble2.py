@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.model_selection import train_test_split
-from keras.models import Sequential, Model
+from keras.models import Sequential, Model, load_model
 from keras.layers import Dense, Input
 
 #1. data
@@ -61,6 +61,8 @@ last_output = Dense(1, name = 'last')(merge4)
 model = Model(inputs=[input1, input11, input111], outputs = last_output)
 model.summary()
 
+model = load_model('_save/keras62/k62_02/k62_020814_1631_0878-0.0000.hdf5')
+
 #3. compile
 model.compile(loss='mse', optimizer='adam', metrics=['mse'])
 # from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
@@ -76,9 +78,9 @@ model.compile(loss='mse', optimizer='adam', metrics=['mse'])
 # # print(type(date)) #<class 'str'>
 
 
-# path = 'C:\\ai5\\_save\\keras62\\'
+# path = 'C:\\ai5\\_save\\keras62\\k62_02\\'
 # filename ='{epoch:04d}-{val_loss:.4f}.hdf5'   #1000-0.7777.hdf5
-# filepath = "".join([path, 'k62_', date, '_' , filename])
+# filepath = "".join([path, 'k62_02', date, '_' , filename])
 # # #생성 예 : ./_save/keras29_mcp/k29_0726_1654_1000-0.7777.hdf5
 # # ################## mcp 세이브 파일명 만들기 끝 ###################
 
@@ -88,12 +90,10 @@ model.compile(loss='mse', optimizer='adam', metrics=['mse'])
 #     verbose = 1,
 #     save_best_only=True,
 #     filepath=filepath)
-
-model.fit([x1_train, x2_train, x3_train], y_train, epochs=1000, batch_size=1, validation_split=0.2)
+# model.fit([x1_train, x2_train, x3_train], y_train, epochs=1000, batch_size=1, validation_split=0.2, callbacks=[mcp])
 
 
 #4. predict
-
 loss=model.evaluate([x1_test, x2_test, x3_test], y_test)
 # y_test = np.argmax(y_test, axis=1).reshape(-1,1)
 x1_predict =np.array([range(100,105), range(401,406)]).T
@@ -105,3 +105,12 @@ y_predict = model.predict([x1_predict, x2_predict, x3_predict])
 
 print("[3101,3102,3103,3104,3105]예측 : " ,y_predict)
 print("loss : ", loss[0])
+
+
+# [3101,3102,3103,3104,3105]예측 :  [[3101.0005]
+#  [3102.0002]
+#  [3103.0444]
+#  [3104.106 ]
+#  [3105.1685]]
+# loss :  1.2516974834397843e-07
+

@@ -21,7 +21,6 @@ bbb = split_x(a, size)
 
 x=bbb[:, :-1]
 y=bbb[:, -1]
-print(x, y)
 # print(x)
 print(x.shape, y.shape)  #(7, 3) (7,)
 x = x.reshape(7, 3, 1)

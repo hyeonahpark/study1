@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.model_selection import train_test_split
-from keras.models import Sequential, Model
+from keras.models import Sequential, Model, load_model
 from keras.layers import Dense, Input
 
 #1. data
@@ -60,42 +60,45 @@ from keras.layers.merge import Concatenate, concatenate
 #쌤이 해준고
 merge1 = Concatenate()([output1, output11])
 # merge1 = concatenate([output1, output11], name = 'mg1')
-merge2 = Dense(7, name='mg2')(merge1)
-merge3 = Dense(20, name='mg3')(merge2)
-last_output = Dense(1, name='last')(merge3)
+# merge2 = Dense(7, name='mg2')(merge1)
+# merge3 = Dense(20, name='mg3')(merge2)
+last_output = Dense(1, name='last')(merge1)
 
 model = Model(inputs=[input1, input11], outputs = last_output)
 model.summary()
 
+
+model = load_model('_save/keras62/k62_01/k62_010814_1630_0781-0.0000.hdf5')
+
 #3. compile
 model.compile(loss='mse', optimizer='adam', metrics=['mse'])
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-es = EarlyStopping(monitor='val_loss', mode='min', patience=20, verbose=1, restore_best_weights=True)
+# from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+# es = EarlyStopping(monitor='val_loss', mode='min', patience=20, verbose=1, restore_best_weights=True)
 
-################## mcp 세이브 파일명 만들기 시작 ###################
-import datetime
-date = datetime.datetime.now()
-# print(date) #2024-07-26 16:49:57.565880
-# print(type(date)) #<class 'datetime.datetime'>
-date = date.strftime("%m%d_%H%M")
-# print(date) #0726_1654
-# print(type(date)) #<class 'str'>
+# ################## mcp 세이브 파일명 만들기 시작 ###################
+# import datetime
+# date = datetime.datetime.now()
+# # print(date) #2024-07-26 16:49:57.565880
+# # print(type(date)) #<class 'datetime.datetime'>
+# date = date.strftime("%m%d_%H%M")
+# # print(date) #0726_1654
+# # print(type(date)) #<class 'str'>
 
 
-path = 'C:\\ai5\\_save\\keras62\\'
-filename ='{epoch:04d}-{val_loss:.4f}.hdf5'   #1000-0.7777.hdf5
-filepath = "".join([path, 'k62_', date, '_' , filename])
-# #생성 예 : ./_save/keras29_mcp/k29_0726_1654_1000-0.7777.hdf5
-# ################## mcp 세이브 파일명 만들기 끝 ###################
+# path = 'C:\\ai5\\_save\\keras62\\k62_01\\'
+# filename ='{epoch:04d}-{val_loss:.4f}.hdf5'   #1000-0.7777.hdf5
+# filepath = "".join([path, 'k62_01', date, '_' , filename])
+# # #생성 예 : ./_save/keras29_mcp/k29_0726_1654_1000-0.7777.hdf5
+# # ################## mcp 세이브 파일명 만들기 끝 ###################
 
-mcp=ModelCheckpoint(
-    monitor='val_loss',
-    mode='auto',
-    verbose = 1,
-    save_best_only=True,
-    filepath=filepath)
+# mcp=ModelCheckpoint(
+#     monitor='val_loss',
+#     mode='auto',
+#     verbose = 1,
+#     save_best_only=True,
+#     filepath=filepath)
 
-model.fit([x1_train, x2_train], y_train, epochs=1000, batch_size=1, validation_split=0.2)
+# model.fit([x1_train, x2_train], y_train, epochs=1000, batch_size=1, validation_split=0.2, callbacks=[mcp])
 
 
 #4. predict
@@ -116,10 +119,9 @@ print("loss : ", loss[0])
 # print("걸린 시간 : ", round(end_time - start_time, 2), "초") # round 함수 : 반올림, 뒤에 숫자는 소수 자리 수
 
 
-# [3101,3102,3103,3104,3105]예측 :  
-# [[3100.863 ]
-#  [3101.8425]
-#  [3102.8254]
-#  [3103.8135]
-#  [3104.8235]]
-# loss :  1.4856104850769043
+# [3101,3102,3103,3104,3105]예측 :  [[3101.0125]
+#  [3102.0288]
+#  [3103.044 ]
+#  [3104.0596]
+#  [3105.075 ]]
+# loss :  2.3841858265427618e-08
