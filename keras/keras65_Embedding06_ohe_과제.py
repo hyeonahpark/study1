@@ -54,7 +54,6 @@ print(padded_x2.shape) # (1, 5)
 # padded_x2 = padded_x2.reshape(1,30,1)
 # print(padded_x2.shape) # (1, 30, 1)
 
-
 ##원핫 2
 # padded_x = np.array(padded_x).reshape(-1,)
 # padded_x = pd.get_dummies(padded_x)
