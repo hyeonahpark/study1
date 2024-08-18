@@ -31,9 +31,10 @@ padded_x = pad_sequences(x, padding = 'pre', #'post'
                          maxlen=5,
                          truncating='pre', #'post'
                          )
-
 print(padded_x)
 print(padded_x.shape) #(20, 5)
+
+
 
 x_pred = ['누리는 용기가 없어']
 # token2 = Tokenizer()
@@ -52,6 +53,7 @@ print(padded_x2)
 print(padded_x2.shape) # (1, 5)
 # padded_x2 = padded_x2.reshape(1,30,1)
 # print(padded_x2.shape) # (1, 30, 1)
+
 
 ##원핫 2
 # padded_x = np.array(padded_x).reshape(-1,)
