@@ -41,3 +41,5 @@ import matplotlib.pyplot as plt
 plt.scatter(x,y)
 # plt.plot(x,results, color='red')
 plt.show()
+
+
