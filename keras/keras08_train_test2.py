@@ -28,3 +28,5 @@ loss=model.evaluate(x_test, y_test)
 results=model.predict([11])
 print("loss : ", loss)
 print("[11]의 예측값 : ", results)
+
+
