@@ -11,12 +11,14 @@ y=np.array([[1,2,3,4,5,6,7,8,9,10],
 
 print(x.shape) #(3, 10)
 print(y.shape) #(3, 10)
-
 x=x.T
 y=np.transpose(y)
 print(x.shape) #(10, 3)
 print(y.shape) #(10, 3)
+
+
 #2.modeling
+
 #[실습]
 # x_predict=[10,31,211]
 model=Sequential()
