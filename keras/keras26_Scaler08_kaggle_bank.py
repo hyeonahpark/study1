@@ -36,7 +36,7 @@ test_csv=test_csv.drop(['CustomerId', 'Surname'], axis=1)
 y=train_csv['Exited']
 
 
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, RobustScaler
 scalar=MinMaxScaler()
 x[:] = scalar.fit_transform(x[:])
 test_csv[:] = scalar.fit_transform(test_csv[:])

@@ -90,7 +90,7 @@ model.add(Dense(1, activation='sigmoid'))
 start_time = time.time()
 #3. compile
 model.compile(optimizer='adam',loss='binary_crossentropy', metrics=['accuracy'])
-model.fit(x_train, y_train, epochs=1000, batch_size=8)
+model.fit(x_train, y_train, epochs=1000, batch_size=4)
 end_time = time.time()
 model.fit(padded_x, labels, epochs = 1000)
 
@@ -105,10 +105,16 @@ print('loss :', result[0])
 # print(x_pred.shape)
 
 y_pred = model.predict(padded_x2)
-print('나는 집에 가고 싶어요 :', np.round((y_pred)))
+print('누리는 용기가 없어 :', np.round((y_pred)))
 
 
 # Accuracy : 1.0000
 # 1/1 [==============================] - 0s 10ms/step - loss: 7.2699e-06 - accuracy: 1.0000
 # loss : 7.269909019669285e-06
 # 나는 집에 가고 싶어요 : [[1.]]
+ 
+ 
+# Accuracy : 1.0000
+# 1/1 [==============================] - 0s 11ms/step - loss: 7.3768e-07 - accuracy: 1.0000
+# loss : 7.376824555649364e-07
+# 누리는 용기가 없어 : [[0.]]
