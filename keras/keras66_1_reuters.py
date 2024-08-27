@@ -26,6 +26,7 @@ print("뉴스기사의 최대길이 : ", max(len(i) for i in x_train)) #2376
 print("뉴스기사의 최대길이 : ", min(len(i) for i in x_train)) #13
 print("뉴스기사의 평균길이 : ", sum(map(len, x_train)) / len(x_train)) #145.5398574927633
  
+
 #전처리
 x_train = pad_sequences(x_train, padding='pre', maxlen=100,
                         truncating='pre')
