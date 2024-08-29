@@ -9,13 +9,14 @@ rn.seed(337)
 tf.random.set_seed(337) # seed 고정
 np.random.seed(337)
 
+
 #1. data
 datasets = load_boston()
 x = datasets.data
 y = datasets.target
 
 from sklearn.model_selection import train_test_split
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.75, random_state=337)
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.9, random_state=337)
 
 from sklearn.preprocessing import StandardScaler
 scaler = StandardScaler()
