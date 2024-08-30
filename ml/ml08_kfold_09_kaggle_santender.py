@@ -6,6 +6,8 @@ from sklearn.model_selection import train_test_split
 import time
 import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import cross_val_score, cross_validate, KFold, StratifiedKFold
+import xgboost as xgb
 
 path = "C:\\ai5\\_data\\kaggle\\santander-customer-transaction-prediction\\"
 train_csv=pd.read_csv(path + "train.csv", index_col=0)
@@ -49,7 +51,7 @@ x['var_117'] = np.log1p(x['var_117'])
 x['var_120'] = np.log1p(x['var_120'])
 ############################X 데이터 로그변환##########################################
 
-x_train, x_test, y_train, y_test= train_test_split(x, y, test_size=0.2, random_state=1186)
+# x_train, x_test, y_train, y_test= train_test_split(x, y, test_size=0.2, random_state=1186)
 
 
 ##################### y 로그 변환####################################
@@ -58,19 +60,37 @@ x_train, x_test, y_train, y_test= train_test_split(x, y, test_size=0.2, random_s
 ##################### y 로그 변환####################################
 
 #2. model 랜덤 포레스트 모델 학습
-model = RandomForestRegressor(random_state= 1186, max_depth=5, min_samples_split=3)
+model = xgb.XGBClassifier(
+    n_estimators=300,
+    learning_rate=0.1,
+    max_depth=7,
+    random_state=1186,
+    use_label_encoder=False,
+    eval_metric='mlogloss',
+    gpu_id=0
+)
 
-#3. fit
-model.fit(x_train, y_train)
+# fig, ax = plt.subplots(figsize=(10,12))
+# plot_importance(xgb_model, ax=ax)
+# model.fit(x_train, y_train, verbose=1)
+# y_pred = model.predict(x_val)
 
-#4. predict
-score = model.score(x_test, y_test)
-y_pred = model.predict(x_test)
-from sklearn.metrics import r2_score
-r2=r2_score(y_test, y_pred)
-print("score : ", score) 
+#2. modeling
+n_splits=5
+# kfold = KFold(n_splits=n_splits, shuffle=True, random_state=333)
+kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=333)
 
-#변환 x   score :  0.04498226036773978
-#x만 변환 score : 
-#y만 변환 score :  0.04496872525657358
-#둘다변환 score :  
+#3. training
+scores = cross_val_score(model, x, y, cv=kfold)
+print("ACC : ", scores, '\n 평균 ACC : ', round(np.mean(scores), 4))
+
+#KFOLD
+# ACC :  [0.916    0.91195  0.91715  0.911575 0.91575 ] 
+#  평균 ACC :  0.9145
+
+# StratifiedKFold
+# ACC :  [0.91385 0.91325 0.9156  0.9145  0.9142 ] 
+#  평균 ACC :  0.9143
+
+
+
