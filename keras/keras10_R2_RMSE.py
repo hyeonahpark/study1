@@ -22,7 +22,6 @@ model.compile(loss='mse', optimizer='adam')
 model.fit(x_train, y_train, epochs=100, batch_size=1)
 
 #4. predict
-
 loss=model.evaluate(x_test, y_test)
 print("loss : ", loss)  #loss :  4.290445804595947
 
